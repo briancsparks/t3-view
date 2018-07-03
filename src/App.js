@@ -12,7 +12,8 @@ import './App.css';
 class App extends Component {
   render() {
     const onClick = () => {
-      console.log('click');
+      this.props.incrCurrentTestCount();
+      // console.log('click');
     }
 
     return (
@@ -38,7 +39,7 @@ class App extends Component {
               <ItemList itemType="sessions" itemKeyName="sessionId" /> */}
 
               <Navbar.Text pullRight onClick={onClick}>
-              Luigi
+              Luigi {this.props.current.testCount}
                 {/* {`${displaySessionId(sessionId)}`} */}
               </Navbar.Text>
             </Nav>

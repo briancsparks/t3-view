@@ -1,6 +1,6 @@
 
 import {
-  SET_CURRENT_TEST_COUNT
+  INCR_CURRENT_TEST_COUNT
 }                         from '../Actions/ActionTypes.js';
 
 // const _                 = require('underscore');
@@ -14,9 +14,9 @@ export function current(state = {...initialState}, action) {
   const { type, payload } = action;
 
   switch (type) {
-    case SET_CURRENT_TEST_COUNT:
+    case INCR_CURRENT_TEST_COUNT:
       if (!payload) { return state; }
-
+console.log(`incr`)
       return {...state, ...{testCount : state.testCount + payload}};
 
     default:
