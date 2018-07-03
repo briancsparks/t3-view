@@ -11,6 +11,10 @@ import './App.css';
 
 class App extends Component {
   render() {
+    const onClick = () => {
+      console.log('click');
+    }
+
     return (
       <div className="App">
         <Navbar inverse fluid fixedTop>
@@ -33,7 +37,7 @@ class App extends Component {
               {/* <ItemList itemType="clients"  itemKeyName="clientId" />
               <ItemList itemType="sessions" itemKeyName="sessionId" /> */}
 
-              <Navbar.Text pullRight>
+              <Navbar.Text pullRight onClick={onClick}>
               Luigi
                 {/* {`${displaySessionId(sessionId)}`} */}
               </Navbar.Text>
