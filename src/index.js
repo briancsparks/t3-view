@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import configureStore from './configureStore'
+import { getSessionData } from './Drivers/getSessionData'
 
 import './index.css';
 import App                        from './Containers/AppContainer';
@@ -17,3 +18,4 @@ ReactDOM.render(
 );
 
 registerServiceWorker();
+getSessionData(store);
