@@ -6,4 +6,9 @@ export const ADD_SESSIONS                   = 'ADD_SESSIONS';
 export const ADD_CLIENTS                    = 'ADD_CLIENTS';
 export const RESET_TIMESERIES_DATA          = 'RESET_TIMESERIES_DATA';
 export const SET_CURRENT_SESSION            = 'SET_CURRENT_SESSION';
+export const SET_CURRENT_SESSION_ID         = 'SET_CURRENT_SESSION_ID';
+export const ADD_RAW_LOGCAT_DATA            = 'ADD_RAW_LOGCAT_DATA';
+export const ADD_RAW_TIMESTAMPED_DATA       = 'ADD_RAW_TIMESTAMPED_DATA';
+export const ADD_RAW_TIMESERIES_DATA        = 'ADD_RAW_TIMESERIES_DATA';
+export const ADD_RAW_ATTRIBUTE_DATA         = 'ADD_RAW_ATTRIBUTE_DATA';
 

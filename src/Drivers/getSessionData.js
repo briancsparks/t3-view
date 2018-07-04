@@ -6,8 +6,11 @@ import {
   addClients,
 }                                   from '../Actions/Actions'
 import {
+  setCurrentSession
+}                                   from '../Actions/LoadSessionData'
+import {
   config
-}                             from '../utils';
+}                                   from '../utils'
 
 const request               = require('superagent');
 const _                     = require('underscore');
@@ -146,11 +149,12 @@ const goodSamples = _.map([{
 export function getSessionData(store) {
   attachToFeed(store);
 
-  // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180701022645962'
+  // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180312124354509'
+  const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180701022645962'
 
   store.dispatch(addSessions(goodSamples));
   // store.dispatch(resetTimeSeriesData());
-  // store.dispatch(setCurrentSession(firstSessionId));
+  store.dispatch(setCurrentSession(firstSessionId));
 
 
 

@@ -7,7 +7,7 @@ import {
 import {
   displayClientId,
   displaySessionId
-}                             from '../utils-to-move';
+}                             from '../utils';
 
 const displayFn = {
   clients    : displayClientId,
