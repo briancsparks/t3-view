@@ -31,14 +31,18 @@ const columns=['time', 'it'];
 export class Builder {
 
   constructor() {
-    this.rows = [];
+    this.rows     = [[]];
+    this.axisIds  = {};
   }
 
   getCharts() {
     return this.rows;
   }
 
-  addScatter(name, data, key) {
+  addScatter(name, data, key, axisId_) {
+    var   item      = {};
+    const axisId    = axisId_ || `${name}AxisId`;
+
     const deepKey = `it.${key}`;
 
     var tsData = data.map(item => {
@@ -48,22 +52,31 @@ export class Builder {
     tsData = _.sortBy(tsData, x => x[0])
 
     const timeSeries  = new TimeSeries({name, utc, columns, points:tsData});
-    const axisId      = `${name}AxisId`;
 
-    this.rows.push([{
-      yAxis: {
+    item.scatterChart = {
+      timeSeries,
+      deepKey,
+      style       : scatterStyle(deepKey),
+      axisId      : axisId,
+    };
+
+    if (!this.axisIds[axisId]) {
+      let axis = {
         axisId,
-        label       : `${name}.${key}`,
+        label       : `${key}`,
         seriesMin   : timeSeries.min(deepKey),
         seriesMax   : timeSeries.max(deepKey),
-      },
-      scatterChart: {
-        timeSeries,
-        deepKey,
-        style       : scatterStyle(deepKey),
-        axisId      : axisId,
-      }
-    }])
+      };
+
+      item.yAxis = axis;
+      this.axisIds[axisId] = axis;
+    }
+
+    var x = this.rows.pop();
+    x.push(item);
+    this.rows.push(x);
+
+    return axisId;
   }
 
 }

@@ -11,10 +11,16 @@ const mapStateToProps = (state, ownProps) => {
 
   var builder = new Builder();
 
-  const sentPackets = deref(state, 'events.eventsByEventType.sentPacket') || [];
+  var   axisId;
 
+  const sentPackets = deref(state, 'events.eventsByEventType.sentPacket') || [];
   if (sentPackets.length > 0) {
-    builder.addScatter('sentPackets', sentPackets, 'nodeNum');
+    axisId = builder.addScatter('sentPackets', sentPackets, 'nodeNum');
+  }
+
+  const recvPackets = deref(state, 'events.eventsByEventType.recvPacket') || [];
+  if (recvPackets.length > 0) {
+    builder.addScatter('recvPackets', recvPackets, 'nodeNum', axisId);
   }
 
 

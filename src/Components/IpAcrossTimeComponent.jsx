@@ -203,7 +203,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 {sg.reduce(seriesList, [], (m, seriesItem, n) => {
                   const { labelAxis } = seriesItem;
                   if (!labelAxis) {
-                    return null;
+                    return m;
                   }
                   return sg.ap(m,
                     <LabelAxis id={labelAxis.axisId}
@@ -221,7 +221,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 {sg.reduce(seriesList, [], (m, seriesItem, n) => {
                   const { yAxis } = seriesItem;
                   if (!yAxis) {
-                    return null;
+                    return m;
                   }
                   return sg.ap(m,
                     <YAxis id={yAxis.axisId}
@@ -262,7 +262,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 {sg.reduce(seriesList, [], (m, seriesItem, n) => {
                   const labelAxis     = seriesItem.labelAxis2;
                   if (!labelAxis) {
-                    return null;
+                    return m;
                   }
                   return sg.ap(m,
                     <LabelAxis id={labelAxis.axisId}
@@ -280,7 +280,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 {sg.reduce(seriesList, [], (m, seriesItem, n) => {
                   const yAxis     = seriesItem.yAxis2;
                   if (!yAxis) {
-                    return null;
+                    return m;
                   }
                   return sg.ap(m,
                     <YAxis id={yAxis.axisId}
