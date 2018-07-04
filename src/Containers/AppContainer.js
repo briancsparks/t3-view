@@ -9,11 +9,12 @@ import AppComponent from '../App';
 
 
 const mapStateToProps = (state, ownProps) => {
-  // const testCount     = state.current.testCount * 3;
-  const testCount     = state.current.testCount;
-  const { current }   = state;
+  const { current  }     = state;
+  const { testCount =0 }    = current;
 
-  return {current:{...current, testCount}, ...ownProps};
+  // const result = {current:{...current, testCount:testCount*3}, ...ownProps};
+  const result = {current:{...current, testCount}, ...ownProps};
+  return result;
 }
 
 const mapDispatchToProps = (dispatch) => {

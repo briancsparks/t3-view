@@ -1,11 +1,9 @@
 
-import { combineReducers }        from 'redux';
-
 import { current }                from './Current';
 
-const rootReducer = combineReducers({
+const rootReducer = {
   current,
-});
+};
 
 export default rootReducer
 
