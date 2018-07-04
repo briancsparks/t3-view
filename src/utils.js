@@ -245,7 +245,7 @@ export function unpackPayload(payload) {
 
   result.items = payload.items || payload.payload || [];
 
-  return result;
+  return sg.deepCopy(result);
 }
 
 const placeholderKeys = 'y,ip'.split(',');

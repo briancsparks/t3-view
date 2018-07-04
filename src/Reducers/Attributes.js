@@ -9,6 +9,8 @@ import {
 const sg                    = require('sgsg/lite');
 const _                     = require('underscore');
 
+const { deref }             = sg;
+
 const initialState = {
   entities  : {}
 };
@@ -66,6 +68,19 @@ function mergeEntities(current, newItems) {
   })
 
   return [...current, ...newEntities];
+}
+
+export function enumEntity(state, name, fn_) {
+  const fn      = _.isFunction(fn_) ? fn_ : _.identity;
+  var   result  = [];
+
+  const entityList = deref(state, `attributes.entities.${name}`);
+  _.each(entityList, (entitySet, name) => {
+    const item = _.sortBy(entitySet, 'when')[0] || {};
+    sg.ap(result, fn(item));
+  })
+
+  return result;
 }
 
 

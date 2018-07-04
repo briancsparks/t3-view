@@ -4,6 +4,7 @@ import {
   // NavDropdown,
   // MenuItem
 }                             from 'react-bootstrap';
+import { TopTabs }            from './Components/TopTabsComponent';
 import {
   ItemList
 }                             from './Containers/ItemListContainer';
@@ -54,8 +55,8 @@ class App extends Component {
         {/* Main Content Area */}
         <div>
           <Grid fluid={true}>
-            {/* <TopTabs>
-            </TopTabs> */}
+            <TopTabs>
+            </TopTabs>
 
             Mario
 
