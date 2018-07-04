@@ -5,7 +5,7 @@ import {
   TimeRange
 }                             from 'pondjs';
 import _                      from 'underscore';
-import {
+import sg, {
   isnt
 }                             from 'sgsg/lite';
 import { cold }               from 'react-hot-loader';
@@ -16,9 +16,9 @@ import {
   ChartContainer,
   Brush,
   YAxis,
-  // LabelAxis,
+  LabelAxis,
   LineChart,
-  // ScatterChart,
+  ScatterChart,
   Charts,
   styler
 }                             from 'react-timeseries-charts';
@@ -33,9 +33,9 @@ cold(ChartRow)
 cold(ChartContainer)
 cold(Brush)
 cold(YAxis)
-// cold(LabelAxis)
+cold(LabelAxis)
 cold(LineChart)
-// cold(ScatterChart)
+cold(ScatterChart)
 cold(Charts)
 cold(styler)
 
@@ -102,12 +102,9 @@ export class IpAcrossTimeComponent extends React.Component {
     //   lastTick
     // }                       = props_timeSeries;
 
-    // const firstTick         = 0;
-    // const lastTick          = 8000;
     const firstTick         = mwpTimeSeries.range().begin();
     const lastTick          = mwpTimeSeries.range().end();
 
-    // const loopNumMax        = 10000;
     const loopNumMax        = mwpTimeSeries ? mwpTimeSeries.max('it.loopNum') : 100;
     const fullTimeRange     = new TimeRange([firstTick, lastTick]);
     const brushrange        = this.state.brushrange || fullTimeRange;
@@ -117,6 +114,10 @@ export class IpAcrossTimeComponent extends React.Component {
 
     return (
       <div>
+
+        {this.props.charts.map(seriesList => {
+          return this.renderChartRow(brushrange, seriesList)
+        })}
 
         {/* {this.renderScatterEzChart(brushrange, ezChartData)}
         {this.renderScatterChart(brushrange, 'recvPacket.nodeNum')}
@@ -161,6 +162,142 @@ export class IpAcrossTimeComponent extends React.Component {
         </div>
 
 
+      </div>
+    )
+  }
+
+  renderChartRow(timerange, seriesList) {
+
+    const infoValues = () => {
+      return [{
+        label: "Fooadfafasf",
+        value: "Barsdaafasdfs"
+      }];
+    };
+
+    return (
+
+      <div className="row">
+        <div className="col-md-12" style={chartStyle}>
+          <Resizable>
+
+            <ChartContainer timeRange={timerange}
+              format="relative"
+              trackerPosition={this.state.tracker}
+              onTrackerChanged={this._handleTrackerChanged.bind(this)}
+              onTimeRangeChanged={this._handleTimeRangeChange.bind(this)}
+              onChartResize={this._handleChartResize.bind(this)}
+            >
+
+              <ChartRow height="100" debug={false}
+                visible={true}
+                trackerInfoValues={infoValues()}
+                trackerInfoHeight={40}
+                trackerInfoWidth={110}
+                trackerInfoStyle={{
+                  fill: 'black',
+                  color: '#DDD'
+                }}
+              >
+
+                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                  const { labelAxis } = seriesItem;
+                  if (!labelAxis) {
+                    return null;
+                  }
+                  return sg.ap(m,
+                    <LabelAxis id={labelAxis.axisId}
+                      label={labelAxis.label || 'label'}
+                      values={labelAxis.seriesSummaryValues}
+                      key={n || labelAxis.n}
+                      min={labelAxis.seriesMin || 0}
+                      max={labelAxis.seriesMax || 256}
+                      width={70}
+                      type="linear"
+                      format=",.1f" />
+                  )
+                })}
+
+                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                  const { yAxis } = seriesItem;
+                  if (!yAxis) {
+                    return null;
+                  }
+                  return sg.ap(m,
+                    <YAxis id={yAxis.axisId}
+                      label={yAxis.label || 'label'}
+                      key={n || yAxis.n}
+                      min={yAxis.seriesMin || 0}
+                      max={yAxis.seriesMax || 256}
+                      width={70}
+                      type="linear"
+                      format=",.1f" />
+                  )
+                })}
+
+                <Charts>
+
+                  {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                    const { scatterChart }    = seriesItem;
+                    return sg.ap(m,
+                      <ScatterChart axis={scatterChart.axisId} key={n || scatterChart.n}
+                        series={scatterChart.timeSeries}
+                        columns={[scatterChart.deepKey]}
+                        style={scatterChart.style}
+                        onMouseNear={this._handleMouseNear.bind(this)}
+                        info={infoValues()}
+                        infoHeight={40}
+                        infoWidth={110}
+                        infoStyle={{
+                          fill: 'black',
+                          color: '#DDD'
+                        }}
+                      />
+                    )
+                  })}
+
+
+                </Charts>
+
+                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                  const labelAxis     = seriesItem.labelAxis2;
+                  if (!labelAxis) {
+                    return null;
+                  }
+                  return sg.ap(m,
+                    <LabelAxis id={labelAxis.axisId}
+                      label={labelAxis.label || 'label'}
+                      values={labelAxis.seriesSummaryValues}
+                      key={n || labelAxis.n}
+                      min={labelAxis.seriesMin || 0}
+                      max={labelAxis.seriesMax || 256}
+                      width={140}
+                      type="linear"
+                      format=",.1f" />
+                  )
+                })}
+
+                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                  const yAxis     = seriesItem.yAxis2;
+                  if (!yAxis) {
+                    return null;
+                  }
+                  return sg.ap(m,
+                    <YAxis id={yAxis.axisId}
+                      label={yAxis.label || 'label'}
+                      key={n || yAxis.n}
+                      min={yAxis.seriesMin || 0}
+                      max={yAxis.seriesMax || 256}
+                      width={140}
+                      type="linear"
+                      format=",.1f" />
+                  )
+                })}
+
+              </ChartRow>
+            </ChartContainer>
+          </Resizable>
+        </div>
       </div>
     )
   }
