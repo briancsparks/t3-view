@@ -6,12 +6,28 @@ import {
   deref
 }                               from 'sgsg/lite';
 
+// const sg                      = require('sgsg/lite');
+const _                       = require('underscore');
+
 
 const mapStateToProps = (state, ownProps) => {
 
   var builder = new Builder();
 
   var   axisId;
+
+  const logcatEvents     = deref(state, 'logcat.events') || [];
+  const wifiStateMachine = logcatEvents.filter(event => {
+    return true;
+    // return event.mod.toLowerCase() === 'wifistatemachine';
+  }).map(event => {
+    return {millis: +_.last(event.Hms.split('.')), ...event}
+  })
+  if (wifiStateMachine.length > 0) {
+    builder.addScatter('wifiStateMachine', wifiStateMachine, 'millis');
+  }
+
+  builder.addRow();
 
   const sentPackets = deref(state, 'events.eventsByEventType.sentPacket') || [];
   if (sentPackets.length > 0) {

@@ -9,7 +9,7 @@ import {
 }                             from 'pondjs';
 import { cold }               from 'react-hot-loader';
 
-const sg                      = require('sgsg/lite');
+// const sg                      = require('sgsg/lite');
 const _                       = require('underscore');
 
 cold(TimeSeries)
@@ -37,6 +37,10 @@ export class Builder {
 
   getCharts() {
     return this.rows;
+  }
+
+  addRow() {
+    this.rows.push([])
   }
 
   addScatter(name, data, key, axisId_) {

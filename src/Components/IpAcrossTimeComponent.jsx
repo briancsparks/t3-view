@@ -8,6 +8,9 @@ import _                      from 'underscore';
 import sg, {
   isnt
 }                             from 'sgsg/lite';
+import {
+  invokeIt
+}                             from '../utils';
 import { cold }               from 'react-hot-loader';
 
 import {
@@ -89,6 +92,12 @@ export class IpAcrossTimeComponent extends React.Component {
     const mwpPoints = _.sortBy(mwpUpEvents.map((event) => [event.tick, event]), x => x[0])
     const mwpTimeSeries = new TimeSeries({name:'mwpUp', utc:true, columns:['time', 'it'], points:mwpPoints})
 
+    const allTimeseries = sg.reduce(this.props.charts, [mwpTimeSeries], (m0, seriesList) => {
+      return sg.reduce(seriesList, m0, (m, seriesItem) => {
+        return [...m, seriesItem.scatterChart.timeSeries];
+      })
+    })
+
     var   props_timeSeries = { ...this.props.timeSeries };
 
     // const tsData = {name: eventType, columns:['time', 'it'], utc:true, points: eventList.map((event) => [event.tick, event])};
@@ -102,8 +111,11 @@ export class IpAcrossTimeComponent extends React.Component {
     //   lastTick
     // }                       = props_timeSeries;
 
-    const firstTick         = mwpTimeSeries.range().begin();
-    const lastTick          = mwpTimeSeries.range().end();
+    var   firstTick         = mwpTimeSeries.range().begin();
+    var   lastTick          = mwpTimeSeries.range().end();
+
+    firstTick               = sg.reduce(allTimeseries, firstTick, (m, ts) => invokeIt(Math.min, ts.range().begin(), m));
+    lastTick                = sg.reduce(allTimeseries, lastTick,  (m, ts) => invokeIt(Math.max, ts.range().end(),   m));
 
     const loopNumMax        = mwpTimeSeries ? mwpTimeSeries.max('it.loopNum') : 100;
     const fullTimeRange     = new TimeRange([firstTick, lastTick]);
@@ -209,7 +221,7 @@ export class IpAcrossTimeComponent extends React.Component {
                     <LabelAxis id={labelAxis.axisId}
                       label={labelAxis.label || 'label'}
                       values={labelAxis.seriesSummaryValues}
-                      key={n || labelAxis.n}
+                      key={n}
                       min={labelAxis.seriesMin || 0}
                       max={labelAxis.seriesMax || 256}
                       width={70}
@@ -226,7 +238,7 @@ export class IpAcrossTimeComponent extends React.Component {
                   return sg.ap(m,
                     <YAxis id={yAxis.axisId}
                       label={yAxis.label || 'label'}
-                      key={n || yAxis.n}
+                      key={n}
                       min={yAxis.seriesMin || 0}
                       max={yAxis.seriesMax || 256}
                       width={70}
@@ -240,7 +252,7 @@ export class IpAcrossTimeComponent extends React.Component {
                   {sg.reduce(seriesList, [], (m, seriesItem, n) => {
                     const { scatterChart }    = seriesItem;
                     return sg.ap(m,
-                      <ScatterChart axis={scatterChart.axisId} key={n || scatterChart.n}
+                      <ScatterChart axis={scatterChart.axisId} key={n}
                         series={scatterChart.timeSeries}
                         columns={[scatterChart.deepKey]}
                         style={scatterChart.style}
@@ -268,7 +280,7 @@ export class IpAcrossTimeComponent extends React.Component {
                     <LabelAxis id={labelAxis.axisId}
                       label={labelAxis.label || 'label'}
                       values={labelAxis.seriesSummaryValues}
-                      key={n || labelAxis.n}
+                      key={n}
                       min={labelAxis.seriesMin || 0}
                       max={labelAxis.seriesMax || 256}
                       width={140}
@@ -285,7 +297,7 @@ export class IpAcrossTimeComponent extends React.Component {
                   return sg.ap(m,
                     <YAxis id={yAxis.axisId}
                       label={yAxis.label || 'label'}
-                      key={n || yAxis.n}
+                      key={n}
                       min={yAxis.seriesMin || 0}
                       max={yAxis.seriesMax || 256}
                       width={140}
