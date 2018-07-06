@@ -9,7 +9,8 @@ import sg, {
   isnt
 }                             from 'sgsg/lite';
 import {
-  invokeIt
+  invokeIt,
+  drawEach,
 }                             from '../utils';
 import { cold }               from 'react-hot-loader';
 
@@ -70,7 +71,8 @@ export class IpAcrossTimeComponent extends React.Component {
     super(props);
     this.state = {
       timerange   : initialRange,
-      brushrange  : null
+      brushrange  : null,
+      seriesListData  : {}
     };
   }
 
@@ -94,7 +96,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
     const allTimeseries = sg.reduce(this.props.charts, [mwpTimeSeries], (m0, seriesList) => {
       return sg.reduce(seriesList, m0, (m, seriesItem) => {
-        return [...m, seriesItem.scatterChart.timeSeries];
+        return [...m, seriesItem.scatterChart.series];
       })
     })
 
@@ -111,10 +113,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
     const loopNumMax        = mwpTimeSeries ? mwpTimeSeries.max('it.loopNum') : 100;
     const fullTimeRange     = new TimeRange([firstTick, lastTick]);
-    const brushrange        = new TimeRange([firstMwpUpTick, lastMwpUpTick]);
-
-
-    // console.log(`mwpup size: ${mwpTimeSeries.size()}`);
+    const brushrange        = this.state.brushrange || new TimeRange([firstMwpUpTick, lastMwpUpTick]);
 
     return (
       <div>
@@ -172,12 +171,49 @@ export class IpAcrossTimeComponent extends React.Component {
 
   renderChartRow(timerange, seriesList, n) {
 
+    seriesList.forEach((seriesItem, n) => {
+      // var itemData = {};
+
+      console.log({seriesItem, n})
+      if (seriesItem.scatterChart) {
+        seriesItem.scatterChart.itemData = seriesItem.scatterChart.itemData || {};
+        seriesItem.scatterChart.onMouseNear = function(stats) {
+          if (isnt(stats)) { return; }
+
+          const {column, event} = stats;
+          seriesItem.scatterChart.itemData.highlight = event.get('it.__id');
+
+          // console.log(`mouse ${event.get('it.__id')} ${n}`, {column, seriesItem, itemData:seriesItem.scatterChart.itemData}, event.toJSON());
+        };
+
+        seriesItem.scatterChart.radius = function(event, column) {
+          if (event.get('it.__id') === seriesItem.scatterChart.itemData.highlight) {
+            // console.log(`radius ${event.get('it.__id')} === ${seriesItem.scatterChart.itemData.highlight}`, {event, column, itemData:seriesItem.scatterChart.itemData});
+            return 10.0;
+          }
+          return 3.0;
+        };
+      }
+
+    })
+
     const infoValues = () => {
       return [{
-        label: "Fooadfafasf",
+        label: "Foo",
         value: `${n}-Barsdaafasdfs`
       }];
     };
+
+    var highlight;
+
+    // const onMouseNear = function(stats) {
+    //   if (isnt(stats)) { return; }
+
+    //   const {column, event} = stats;
+    //   console.log(`local`, column, event.toJSON());
+
+    //   highlight = stats;
+    // };
 
     return (
 
@@ -197,7 +233,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 visible={true}
                 trackerInfoValues={infoValues()}
                 trackerInfoHeight={40}
-                trackerInfoWidth={110}
+                trackerInfoWidth={150}
                 trackerInfoStyle={{
                   fill: 'black',
                   color: '#DDD'
@@ -222,40 +258,26 @@ export class IpAcrossTimeComponent extends React.Component {
                   )
                 })}
 
-                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
-                  const { yAxis } = seriesItem;
-                  if (!yAxis) {
-                    return m;
-                  }
-                  return sg.ap(m,
-                    <YAxis id={yAxis.axisId}
-                      label={yAxis.label || 'label'}
-                      key={n}
-                      min={yAxis.seriesMin || 0}
-                      max={yAxis.seriesMax || 256}
-                      width={70}
-                      type="linear"
-                      format=",.1f" />
-                  )
-                })}
+                {drawEach(seriesList, 'yAxis', (yAxis, n) => (
+                  <YAxis {...yAxis} key={n} />
+                ))}
 
                 <Charts>
 
                   {sg.reduce(seriesList, [], (m, seriesItem, n) => {
                     const { scatterChart }    = seriesItem;
                     return sg.ap(m,
-                      <ScatterChart axis={scatterChart.axisId} key={n}
-                        series={scatterChart.timeSeries}
-                        columns={[scatterChart.deepKey]}
-                        style={scatterChart.style}
-                        onMouseNear={this._handleMouseNear.bind(this)}
-                        info={infoValues()}
-                        infoHeight={40}
-                        infoWidth={110}
-                        infoStyle={{
-                          fill: 'black',
-                          color: '#DDD'
-                        }}
+                      <ScatterChart {...scatterChart} key={n}
+                        // onMouseNear={this._handleMouseNear.bind(this)}
+                        // onMouseNear={onMouseNear}
+                        highlight={highlight}
+                        // info={infoValues()}
+                        // infoHeight={40}
+                        // infoWidth={110}
+                        // infoStyle={{
+                        //   fill: 'black',
+                        //   color: '#DDD'
+                        // }}
                       />
                     )
                   })}
@@ -281,22 +303,9 @@ export class IpAcrossTimeComponent extends React.Component {
                   )
                 })}
 
-                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
-                  const yAxis     = seriesItem.yAxis2;
-                  if (!yAxis) {
-                    return m;
-                  }
-                  return sg.ap(m,
-                    <YAxis id={yAxis.axisId}
-                      label={yAxis.label || 'label'}
-                      key={n}
-                      min={yAxis.seriesMin || 0}
-                      max={yAxis.seriesMax || 256}
-                      width={140}
-                      type="linear"
-                      format=",.1f" />
-                  )
-                })}
+                {drawEach(seriesList, 'yAxis2', (yAxis, n) => (
+                  <YAxis {...yAxis} key={n} />
+                ))}
 
               </ChartRow>
             </ChartContainer>
@@ -327,8 +336,8 @@ export class IpAcrossTimeComponent extends React.Component {
   _handleMouseNear(stats) {
     if (isnt(stats)) { return; }
 
-    // const {column, event} = stats;
-    // console.log(column, event.toJSON());
+    const {column, event} = stats;
+    console.log(column, event.toJSON());
   }
 
 

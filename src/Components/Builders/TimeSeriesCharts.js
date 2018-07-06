@@ -58,22 +58,23 @@ export class Builder {
     const timeSeries  = new TimeSeries({name, utc, columns, points:tsData});
 
     item.scatterChart = {
-      timeSeries,
-      deepKey,
+      series      : timeSeries,
+      columns     : [deepKey],
       style       : scatterStyle(deepKey),
-      axisId      : axisId,
+      axis        : axisId,
     };
 
     if (!this.axisIds[axisId]) {
-      let axis = {
-        axisId,
+      item.yAxis = {
+        id          : axisId,
         label       : `${key}`,
-        seriesMin   : timeSeries.min(deepKey),
-        seriesMax   : timeSeries.max(deepKey),
+        min         : timeSeries.min(deepKey),
+        max         : timeSeries.max(deepKey),
+        type        : 'linear',
+        format      : ',.1f',
+        width       : 70,
       };
-
-      item.yAxis = axis;
-      this.axisIds[axisId] = axis;
+      this.axisIds[axisId] = item.yAxis;
     }
 
     var x = this.rows.pop();

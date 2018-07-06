@@ -18,6 +18,17 @@ const initialState = {
   events  : []
 };
 
+var   nextId = 5;
+const zereos = ['0000000000', '000000000', '00000000', '000000', '00000', '0000', '000', '00', '0', '', '', '', '', '', '', '', ''];
+
+function genId() {
+  const numStr  = ''+nextId++;
+  const len     = numStr.length;
+
+  return `lc:${zereos[len]}${numStr}`;
+}
+
+
 export function logcat(state = {...initialState}, action) {
 
   const { type } = action;
@@ -37,7 +48,7 @@ function handleRawLogcatData(state, action) {
 
   var   newEventList = eventList.items.map(event => {
     const mod = chompColon(event.mod || event.module || '');
-    return {...event, mod, module:mod}
+    return {...event, mod, module:mod, __id:genId()}
   })
 
   var   events  = [...state.events, ...newEventList];

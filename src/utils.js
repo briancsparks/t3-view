@@ -82,6 +82,24 @@ export function invokeIt(fn /* ... */) {
   return fn(...rest);
 }
 
+export function _arry(x) {
+  if (sg.isnt(x)) { return []; }
+  return [x];
+}
+
+export function drawEach(list, name, fn) {
+  return sg.reduce(list, [], (m, item, n) => {
+    if (sg.isnt(item[name]))  { return m; }
+
+    const items = [item[name]].map(x => {
+      return fn(x, n);
+    })
+
+    return [...m, ...items];
+  })
+
+}
+
 export function displaySessionId(session) {
   const sessionId = session.sessionId || session;
 

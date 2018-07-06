@@ -15,6 +15,16 @@ import {
 const sg                    = require('sgsg/lite');
 const _                     = require('underscore');
 
+var   nextId = 5;
+const zereos = ['0000000000', '000000000', '00000000', '000000', '00000', '0000', '000', '00', '0', '', '', '', '', '', '', '', ''];
+
+function genId() {
+  const numStr  = ''+nextId++;
+  const len     = numStr.length;
+
+  return `ev:${zereos[len]}${numStr}`;
+}
+
 const initialState = {
   events  : {}
 };
@@ -54,6 +64,8 @@ function handleRawTimeSeriesData(state, action) {
       event = sg.kv(event, 'ipNum', ipNumber(event.ip));
       event = sg.kv(event, 'nodeNum', nodeNum(event, interfaces));
     }
+
+    event = sg.kv(event, '__id', genId());
 
     firstTick = invokeIt(Math.min, firstTick, event.tick);
     lastTick  = invokeIt(Math.max, lastTick,  event.tick);
