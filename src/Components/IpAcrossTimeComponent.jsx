@@ -98,44 +98,36 @@ export class IpAcrossTimeComponent extends React.Component {
       })
     })
 
-    var   props_timeSeries = { ...this.props.timeSeries };
+    var   firstMwpUpTick    = mwpTimeSeries.range().begin().getTime();
+    var   lastMwpUpTick     = mwpTimeSeries.range().end().getTime();
+    const mwpUpRange        = lastMwpUpTick - firstMwpUpTick;
+    const extra             = mwpUpRange * 0.05;
 
-    // const tsData = {name: eventType, columns:['time', 'it'], utc:true, points: eventList.map((event) => [event.tick, event])};
+    const firstTick         = sg.reduce(allTimeseries, firstMwpUpTick, (m, ts) => invokeIt(Math.min, ts.range().begin(), m));
+    const lastTick          = sg.reduce(allTimeseries, lastMwpUpTick,  (m, ts) => invokeIt(Math.max, ts.range().end(),   m));
 
-
-
-
-
-    // const {
-    //   firstTick,
-    //   lastTick
-    // }                       = props_timeSeries;
-
-    var   firstTick         = mwpTimeSeries.range().begin();
-    var   lastTick          = mwpTimeSeries.range().end();
-
-    firstTick               = sg.reduce(allTimeseries, firstTick, (m, ts) => invokeIt(Math.min, ts.range().begin(), m));
-    lastTick                = sg.reduce(allTimeseries, lastTick,  (m, ts) => invokeIt(Math.max, ts.range().end(),   m));
+    firstMwpUpTick         -= extra;
+    lastMwpUpTick          += extra;
 
     const loopNumMax        = mwpTimeSeries ? mwpTimeSeries.max('it.loopNum') : 100;
     const fullTimeRange     = new TimeRange([firstTick, lastTick]);
-    const brushrange        = this.state.brushrange || fullTimeRange;
+    const brushrange        = new TimeRange([firstMwpUpTick, lastMwpUpTick]);
 
 
-    console.log(`mwpup size: ${mwpTimeSeries.size()}`);
+    // console.log(`mwpup size: ${mwpTimeSeries.size()}`);
 
     return (
       <div>
 
-        {this.props.charts.map(seriesList => {
-          return this.renderChartRow(brushrange, seriesList)
+        {this.props.charts.map((seriesList, n) => {
+          return this.renderChartRow(brushrange, seriesList, n+1)
         })}
 
         {/* {this.renderScatterEzChart(brushrange, ezChartData)}
         {this.renderScatterChart(brushrange, 'recvPacket.nodeNum')}
         {this.renderScatterChart(brushrange, 'sentPacket')} */}
 
-        <div className="row">
+        <div className="row" id={0}>
           <div className="col-md-12" style={brushStyle}>
             <Resizable>
               <ChartContainer
@@ -178,18 +170,18 @@ export class IpAcrossTimeComponent extends React.Component {
     )
   }
 
-  renderChartRow(timerange, seriesList) {
+  renderChartRow(timerange, seriesList, n) {
 
     const infoValues = () => {
       return [{
         label: "Fooadfafasf",
-        value: "Barsdaafasdfs"
+        value: `${n}-Barsdaafasdfs`
       }];
     };
 
     return (
 
-      <div className="row">
+      <div className="row" id={n}>
         <div className="col-md-12" style={chartStyle}>
           <Resizable>
 
