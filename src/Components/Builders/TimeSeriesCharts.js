@@ -8,7 +8,7 @@ import {
   // TimeRange
 }                             from 'pondjs';
 import { cold }               from 'react-hot-loader';
-import { invokeIt }           from '../../utils';
+// import { invokeIt }           from '../../utils';
 
 const sg                      = require('sgsg/lite');
 const _                       = require('underscore');
@@ -99,7 +99,7 @@ export class Builder {
     var   tsData = [];
 
     dataList.forEach(dataItem => {
-      const { name, data, key } = dataItem;
+      const { /* name, */ data, key } = dataItem;
 
       label = label || key;
 
@@ -230,14 +230,14 @@ export class Builder {
 
 }
 
-function matchingTick(list, tick, origLen) {
-  for (var i = 0; i < origLen; ++i) {
-    if (list[i][0] === tick) {
-      return i;
-    }
-  }
-  return null;
-}
+// function matchingTick(list, tick, origLen) {
+//   for (var i = 0; i < origLen; ++i) {
+//     if (list[i][0] === tick) {
+//       return i;
+//     }
+//   }
+//   return null;
+// }
 
 // function mkDefTimeSeries(name, deepKey_) {
 //   const deepKey   = deepKey_                      || 'it.y';

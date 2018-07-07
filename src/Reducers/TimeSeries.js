@@ -1,5 +1,6 @@
 import {
-  ADD_RAW_TIMESERIES_DATA
+  ADD_RAW_TIMESERIES_DATA,
+  RESET_TIMESERIES_DATA,
 }                             from '../Actions/ActionTypes.js';
 import { enumEntity }         from './Attributes';
 import {
@@ -36,6 +37,9 @@ export function events(state = {...initialState}, action) {
   switch (type) {
     case ADD_RAW_TIMESERIES_DATA:
       return handleRawTimeSeriesData(state, action);
+
+    case RESET_TIMESERIES_DATA:
+      return initialState;
 
     default:
       return state;

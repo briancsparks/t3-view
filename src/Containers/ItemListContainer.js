@@ -1,9 +1,11 @@
 import { connect }              from "react-redux";
 import _                        from 'underscore';
 import {
-  resetTimeSeriesData,
-  setCurrentSession
+  setCurrentSession,
 }                               from '../Actions/LoadSessionData';
+import {
+  resetTimeSeriesData,
+}                               from '../Actions/Actions';
 import {
   displayClientId,
   displaySessionId

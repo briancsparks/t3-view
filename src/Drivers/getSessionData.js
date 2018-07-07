@@ -11,11 +11,16 @@ import {
 import {
   config
 }                                   from '../utils'
+import {
+  resetTimeSeriesData,
+}                               from '../Actions/Actions';
 
 const request               = require('superagent');
 const _                     = require('underscore');
 const sg                    = {...require('sgsg/lite'), ...require('sgsg/flow')}
 
+const dataBootstrap = 'dataBootstrap';
+const numSessions   = 18;
 
 var dataCount = 0;
 var feedRequestCount = 1;
@@ -153,14 +158,23 @@ export function getSessionData(store) {
   const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180701022645962'
 
   store.dispatch(addSessions(goodSamples));
-  // store.dispatch(resetTimeSeriesData());
+  store.dispatch(resetTimeSeriesData());
   store.dispatch(setCurrentSession(firstSessionId));
 
+  return config.urlFor('query', `querySessions?destKey=asdf&requestId=${dataBootstrap}&limit=${numSessions}&dataType=dbRecords`, true, function(err, queryEndpoint) {
+    return sg.until(function(again, last, count, elapsed) {
 
+      // Have we gotten any data yet?
+      if (dataCount >= numSessions) {
+        return last();
+      }
 
-  if (dataCount <= 8) {
-    //again
-  }
+      return request.get(queryEndpoint).end(function(err, res) {
+        return again(1500);
+      });
+    }, function done() {
+    });
+  });
 }
 
 

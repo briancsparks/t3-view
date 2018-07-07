@@ -1,8 +1,8 @@
 
 import request                      from 'superagent';
 import {
-  RESET_TIMESERIES_DATA,
-  SET_CURRENT_SESSION_ID
+  // RESET_TIMESERIES_DATA,
+  SET_CURRENT_SESSION_ID,
 }                                   from './ActionTypes';
 import {
   addRawLogcatData,
@@ -15,14 +15,14 @@ import { config }                   from '../utils';
 const sg                          = {...require('sgsg/lite'), ...require('sgsg/flow')};
 const _                           = require('underscore');
 
-/**
- * Clears the data
- */
-export function resetTimeSeriesData() {
-  return {
-    type    : RESET_TIMESERIES_DATA
-  }
-}
+// /**
+//  * Clears the data
+//  */
+// export function resetTimeSeriesData() {
+//   return {
+//     type    : RESET_TIMESERIES_DATA
+//   }
+// }
 
 /**
  * Just sets the sessionId in the store.
