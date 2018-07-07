@@ -14,6 +14,10 @@ import {
 }                             from '../utils';
 import _                      from 'underscore';
 import sg                     from 'sgsg/lite';
+
+const hashpjw               = require('hashpjw');
+
+
 const initialState = {
   events  : []
 };
@@ -61,7 +65,14 @@ function handleRawLogcatData(state, action) {
     })
   }
 
-  events = events.map(event => { return {...event, millis: (Math.abs(event.tick) || 0) % 1000}});
+
+  events = events.map(event => {
+    return {
+      ...event,
+      millis: (Math.abs(event.tick) || 0) % 1000,
+      hashpjw : hashpjw(event.msg) % 1000,
+    }
+  });
 
   // 'events' is the main data, but we will add other indexes
   events = _.sortBy(events, 'tick');

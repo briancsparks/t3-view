@@ -3340,6 +3340,10 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.0"
 
+hashpjw@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/hashpjw/-/hashpjw-0.1.0.tgz#288707af2aae0744e86672c6f879e65ccb92b3b6"
+
 he@1.1.x:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/he/-/he-1.1.1.tgz#93410fd21b009735151f8868c2f271f3427e23fd"

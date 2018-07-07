@@ -89,71 +89,144 @@ export class Builder {
     return axisId;
   }
 
-  appendScatter(dataList, options_) {
+  appendScatter(bigName, dataList, options_) {
     const options         = options_          || {};
+    var   seriesItem      = {};
 
-    var   seriesItem      = {
-      scatterChart  : { columns: [], tsData: [] },
-      yAxis         : { min: null, max: null },
-    };
+    const axisId          = options.axisId    || `${bigName}AxisId`;
+    const deepKey         = options.deepKey   || `${bigName}.y`;
+    var   label           = options.label;;
+    var   tsData = [];
 
-    var axisIdOut;
     dataList.forEach(dataItem => {
       const { name, data, key } = dataItem;
-      var   sc                  = seriesItem.scatterChart;
-      var   yx                  = seriesItem.yAxis;
 
-      const axisId          = yx.id       || options.axisId    || `${name}AxisId`;
-      const label           = yx.label    || options.label     || key;
+      label = label || key;
 
-      const deepKey         = options.deepKey   || `${name}.${key}`;
+      tsData = [...tsData, ...data.map(item => {
+        return [item.tick, {y: item[key], ...item}];
+      })]
 
-      var space = sc.columns.map(x => null);
+      tsData = _.sortBy(tsData, x => x[0])
 
-      // Add a new column to the old data
-      sc.tsData = sc.tsData.map(data => {
-        return [...data, null];
-      });
-
-      const origLen = sc.tsData.length;
-      sc.tsData = sg.reduce(data, sc.tsData || [], (m, item) => {
-        const index = matchingTick(m, item.tick, origLen);
-        if (!sg.isnt(index)) {
-          m[index].pop();
-          m[index].push(item);
-        } else {
-          m = [...m, [item.tick, ...space, {y: item[key], ...item}]];
-        }
-
-        return m;
-      });
-
-      sc.tsData = _.sortBy(sc.tsData, x => x[0])
-
-      sc.columns.push(deepKey);
-      sc.tscolumns = sc.columns.map(x => x.split('.')[0]);
-      sc.series = new TimeSeries({name, utc, columns: ['time', ...sc.tscolumns], points:sc.tsData});
-      sc.style  = scatterStyle(sc.columns);
-      sc.axis   = axisId;
-
-      yx.id           = axisId;
-      yx.label        = label;
-      yx.min          = invokeIt(Math.min, yx.min, sc.series.min(deepKey)) || null;
-      yx.max          = invokeIt(Math.max, yx.max, sc.series.max(deepKey)) || null;
-      yx.type         = 'linear';
-      yx.format       = ',.1f';
-      yx.width        = 70;
-
-      axisIdOut = axisId;
     });
 
+    const timeSeries  = new TimeSeries({bigName, utc, columns: ['time', bigName], points:tsData});
+
+    seriesItem.scatterChart = {
+      series      : timeSeries,
+      columns     : [deepKey],
+      style_      : scatterStyle(_.pluck(dataList, 'name')),
+      axis        : axisId,
+    };
+
+    seriesItem.scatterChart.style = (function() {
+      const sStyle = scatterStyle([..._.pluck(dataList, 'name'), 'other'].map(s => s.toLowerCase()));
+      return function(column, event) {
+        var   name  = event.get(`${bigName}.mod`).toLowerCase();
+        const style = sStyle[name];
+
+        return style || sStyle.other;
+      };
+    }());
+
+
+    seriesItem.yAxis = {
+      id          : axisId,
+      label       : label,
+      min         : timeSeries.min(deepKey),
+      max         : timeSeries.max(deepKey),
+      type        : 'linear',
+      format      : ',.1f',
+      width       : 70,
+    };
 
     var seriesList = this.rows.pop();
     seriesList.items.unshift(seriesItem);
     this.rows.push(seriesList);
 
-    return axisIdOut;
+    return axisId;
   }
+
+
+  // The below actually works as intended (merging the lists), but is
+  // not handled right by the charting lib
+
+  // appendScatter(dataList, options_) {
+  //   const options         = options_          || {};
+
+  //   var   seriesItem      = {
+  //     scatterChart  : { columns: [], tsData: [] },
+  //     yAxis         : { min: null, max: null },
+  //   };
+
+  //   var axisIdOut;
+  //   dataList.forEach(dataItem => {
+  //     const { name, data, key } = dataItem;
+  //     var   sc                  = seriesItem.scatterChart;
+  //     var   yx                  = seriesItem.yAxis;
+
+  //     const axisId          = yx.id       || options.axisId    || `${name}AxisId`;
+  //     const label           = yx.label    || options.label     || key;
+
+  //     const deepKey         = options.deepKey   || `${name}.${key}`;
+
+  //     var space = sc.columns.map(x => null);
+
+  //     // Add a new column to the old data
+  //     sc.tsData = sc.tsData.map(data => {
+  //       return [...data, null];
+  //     });
+
+  //     const origLen = sc.tsData.length;
+  //     sc.tsData = sg.reduce(data, sc.tsData || [], (m, item) => {
+  //       const index = matchingTick(m, item.tick, origLen);
+  //       if (!(key in item)) {
+  //         console.log(`missing key ${key} in`, {item});
+  //       }
+
+  //       if (!sg.isnt(index)) {
+  //         m[index].pop();
+  //         m[index].push({y: item[key], ...item});
+  //       } else {
+  //         m = [...m, [item.tick, ...space, {y: item[key], ...item}]];
+  //       }
+
+  //       return m;
+  //     });
+
+  //     sc.tsData = _.sortBy(sc.tsData, x => x[0]);
+
+  //     sc.columns.push(deepKey);
+  //     sc.tscolumns = sc.columns.map(x => x.split('.')[0]);
+  //     sc.series = new TimeSeries({name, utc, columns: ['time', ...sc.tscolumns], points: sc.tsData});
+  //     sc.style  = scatterStyle(sc.columns);
+  //     sc.axis   = axisId;
+
+  //     yx.id           = axisId;
+  //     yx.label        = label;
+  //     yx.type         = 'linear';
+  //     yx.format       = ',.1f';
+  //     yx.width        = 70;
+
+  //     yx.actualMin    = invokeIt(Math.min, yx.actualMin, sc.series.min(deepKey)) || null;
+  //     yx.actualMax    = invokeIt(Math.max, yx.actualMax, sc.series.max(deepKey)) || null;
+
+  //     const range     = yx.actualMax - yx.actualMin;
+
+  //     yx.min          = yx.actualMin - (range*0.10);
+  //     yx.max          = yx.actualMax + (range*0.10);
+
+  //     axisIdOut = axisId;
+  //   });
+
+
+  //   var seriesList = this.rows.pop();
+  //   seriesList.items.unshift(seriesItem);
+  //   this.rows.push(seriesList);
+
+  //   return axisIdOut;
+  // }
 
 }
 
@@ -195,7 +268,7 @@ function matchingTick(list, tick, origLen) {
 // };
 
 
-const colors_ = 'steelblue,red,blue,cadetblue,springgreen,salmon'.split(',');
+const colors_ = 'steelblue,red,salmon,blue,cadetblue,springgreen'.split(',');
 function pickColor(n) {
   return colors_[n%colors_.length];
 }

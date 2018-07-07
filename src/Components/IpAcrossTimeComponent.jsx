@@ -4,12 +4,13 @@ import {
   TimeSeries,
   TimeRange
 }                             from 'pondjs';
-import {
-  allAxesInList, allChartsInList,
-}                             from './Builders/TimeSeriesCharts';
+// import {
+//   allAxesInList, allChartsInList,
+// }                             from './Builders/TimeSeriesCharts';
 import _                      from 'underscore';
 import sg, {
-  isnt, deref
+  isnt,
+  // deref,
 }                             from 'sgsg/lite';
 import {
   invokeIt,
@@ -198,7 +199,7 @@ export class IpAcrossTimeComponent extends React.Component {
             seriesItem.scatterChart.itemData.highlight = event.get(`${eventName}.__id`);
 
             seriesList.info = [{
-              label: 'ip', value: event.get(`${eventName}.ip`)
+              label: 'msg', value: event.get(`${eventName}.msg`)
             }, {
               label: 'mod', value: event.get(`${eventName}.mod`)
             }];
