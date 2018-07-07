@@ -17,7 +17,22 @@ const mapStateToProps = (state, ownProps) => {
   var   axisId;
 
   const logcatEvents     = deref(state, 'logcat.events') || [];
-  const wifiStateMachine = logcatEvents.filter(event => {
+
+  var   wifiStateMachine = logcatEvents.filter(event => event.mod.toLowerCase() === 'wifistatemachine') || [];
+  var   wifiNativeWlan0  = logcatEvents.filter(event => event.mod.toLowerCase() === 'wifinative-wlan0') || [];
+
+  if (wifiStateMachine.length > 0 && wifiNativeWlan0.length > 0) {
+    var   appended = [];
+
+    appended.push({name:'wifiStateMachine', data: wifiStateMachine, key: 'millis'});
+    appended.push({name:'wifiNativeWlan0',  data: wifiNativeWlan0,  key: 'millis'});
+
+    builder.appendScatter(appended);
+  }
+
+  builder.addRow();
+
+  wifiStateMachine = logcatEvents.filter(event => {
     return true;
     // return event.mod.toLowerCase() === 'wifistatemachine';
   }).map(event => {
@@ -36,7 +51,7 @@ const mapStateToProps = (state, ownProps) => {
 
   const recvPackets = deref(state, 'events.eventsByEventType.recvPacket') || [];
   if (recvPackets.length > 0) {
-    builder.addScatter('recvPackets', recvPackets, 'nodeNum', axisId);
+    builder.addScatter('recvPackets', recvPackets, 'nodeNum', {axisId});
   }
 
 

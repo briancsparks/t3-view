@@ -61,6 +61,8 @@ function handleRawLogcatData(state, action) {
     })
   }
 
+  events = events.map(event => { return {...event, millis: (Math.abs(event.tick) || 0) % 1000}});
+
   // 'events' is the main data, but we will add other indexes
   events = _.sortBy(events, 'tick');
 

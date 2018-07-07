@@ -4,9 +4,12 @@ import {
   TimeSeries,
   TimeRange
 }                             from 'pondjs';
+import {
+  allAxesInList, allChartsInList,
+}                             from './Builders/TimeSeriesCharts';
 import _                      from 'underscore';
 import sg, {
-  isnt
+  isnt, deref
 }                             from 'sgsg/lite';
 import {
   invokeIt,
@@ -95,7 +98,7 @@ export class IpAcrossTimeComponent extends React.Component {
     const mwpTimeSeries = new TimeSeries({name:'mwpUp', utc:true, columns:['time', 'it'], points:mwpPoints})
 
     const allTimeseries = sg.reduce(this.props.charts, [mwpTimeSeries], (m0, seriesList) => {
-      return sg.reduce(seriesList, m0, (m, seriesItem) => {
+      return sg.reduce(seriesList.items, m0, (m, seriesItem) => {
         return [...m, seriesItem.scatterChart.series];
       })
     })
@@ -170,50 +173,56 @@ export class IpAcrossTimeComponent extends React.Component {
   }
 
   renderChartRow(timerange, seriesList, n) {
+    // console.log({seriesList.items, n})
 
-    seriesList.forEach((seriesItem, n) => {
-      // var itemData = {};
-
-      console.log({seriesItem, n})
-      if (seriesItem.scatterChart) {
-        seriesItem.scatterChart.itemData = seriesItem.scatterChart.itemData || {};
-        seriesItem.scatterChart.onMouseNear = function(stats) {
-          if (isnt(stats)) { return; }
-
-          const {column, event} = stats;
-          seriesItem.scatterChart.itemData.highlight = event.get('it.__id');
-
-          // console.log(`mouse ${event.get('it.__id')} ${n}`, {column, seriesItem, itemData:seriesItem.scatterChart.itemData}, event.toJSON());
-        };
-
-        seriesItem.scatterChart.radius = function(event, column) {
-          if (event.get('it.__id') === seriesItem.scatterChart.itemData.highlight) {
-            // console.log(`radius ${event.get('it.__id')} === ${seriesItem.scatterChart.itemData.highlight}`, {event, column, itemData:seriesItem.scatterChart.itemData});
-            return 10.0;
-          }
-          return 3.0;
-        };
-      }
-
-    })
-
-    const infoValues = () => {
-      return [{
+    var handled = false;
+    if (!handled) {
+      seriesList.info = seriesList.info || [{
         label: "Foo",
         value: `${n}-Barsdaafasdfs`
       }];
+
+      seriesList.items.forEach((seriesItem, n) => {
+        // var itemData = {};
+
+        if (seriesItem.scatterChart) {
+
+          // console.log({seriesItem, name:seriesItem.scatterChart.series.name(), columns:seriesItem.scatterChart.series.columns(), n})
+          seriesItem.scatterChart.itemData = seriesItem.scatterChart.itemData || {};
+          seriesItem.scatterChart.onMouseNear = function(stats) {
+            if (isnt(stats)) { return; }
+
+            const {column, event} = stats;
+            const eventName = column.split('.')[0] || 'it';
+
+            seriesItem.scatterChart.itemData.highlight = event.get(`${eventName}.__id`);
+
+            seriesList.info = [{
+              label: 'ip', value: event.get(`${eventName}.ip`)
+            }, {
+              label: 'mod', value: event.get(`${eventName}.mod`)
+            }];
+
+            // console.log(`mouse ${event.get('it.__id')} ${n}`, {column, seriesItem, itemData:seriesItem.scatterChart.itemData}, event.toJSON());
+          };
+
+          seriesItem.scatterChart.radius = function(event, column) {
+            const eventName = column.split('.')[0] || 'it';
+            if (event.get(`${eventName}.__id`) === seriesItem.scatterChart.itemData.highlight) {
+              // console.log(`radius ${event.get('it.__id')} === ${seriesItem.scatterChart.itemData.highlight}`, {event, column, itemData:seriesItem.scatterChart.itemData});
+              return 10.0;
+            }
+            return 3.0;
+          };
+        }
+
+      })
+    }
+
+    const infoValues = () => {
+      return seriesList.info;
     };
 
-    var highlight;
-
-    // const onMouseNear = function(stats) {
-    //   if (isnt(stats)) { return; }
-
-    //   const {column, event} = stats;
-    //   console.log(`local`, column, event.toJSON());
-
-    //   highlight = stats;
-    // };
 
     return (
 
@@ -240,7 +249,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 }}
               >
 
-                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                {sg.reduce(seriesList.items, [], (m, seriesItem, n) => {
                   const { labelAxis } = seriesItem;
                   if (!labelAxis) {
                     return m;
@@ -258,19 +267,18 @@ export class IpAcrossTimeComponent extends React.Component {
                   )
                 })}
 
-                {drawEach(seriesList, 'yAxis', (yAxis, n) => (
+                {drawEach(seriesList.items, 'yAxis', (yAxis, n) => (
                   <YAxis {...yAxis} key={n} />
                 ))}
 
                 <Charts>
 
-                  {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                  {sg.reduce(seriesList.items, [], (m, seriesItem, n) => {
                     const { scatterChart }    = seriesItem;
                     return sg.ap(m,
                       <ScatterChart {...scatterChart} key={n}
                         // onMouseNear={this._handleMouseNear.bind(this)}
                         // onMouseNear={onMouseNear}
-                        highlight={highlight}
                         // info={infoValues()}
                         // infoHeight={40}
                         // infoWidth={110}
@@ -285,7 +293,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
                 </Charts>
 
-                {sg.reduce(seriesList, [], (m, seriesItem, n) => {
+                {sg.reduce(seriesList.items, [], (m, seriesItem, n) => {
                   const labelAxis     = seriesItem.labelAxis2;
                   if (!labelAxis) {
                     return m;
@@ -303,7 +311,7 @@ export class IpAcrossTimeComponent extends React.Component {
                   )
                 })}
 
-                {drawEach(seriesList, 'yAxis2', (yAxis, n) => (
+                {drawEach(seriesList.items, 'yAxis2', (yAxis, n) => (
                   <YAxis {...yAxis} key={n} />
                 ))}
 
