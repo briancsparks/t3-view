@@ -39,7 +39,7 @@ const mapStateToProps = (state, ownProps) => {
   // const addLcData = mkAddLcData(mainEvents, appended);
 
   // addLcData('one', 'y', event => event.eventType === 'fd_w2' && event.fd === 71);
-  addLcData('two', 'y', event => event.eventType === 'fd_w2' && event.fd === 70);
+  // addLcData('two', 'y', event => event.eventType === 'fd_w2' && event.fd === 70);
 
   // addLcData('one', 'millis', event => event.mod.toLowerCase() === 'wifistatemachine');
   // addLcData('one', 'millis', event => event.mod.toLowerCase() === 'wifinative-wlan0');

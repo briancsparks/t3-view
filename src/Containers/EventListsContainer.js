@@ -32,7 +32,8 @@ const mapDispatchToProps = (dispatch) => {
       const value = event.target.value;
       const parts = value.split('.');
       const [
-        index, ...chosen ]  = parts;
+        indexStr, ...chosen ]  = parts;
+      const index = +indexStr;
       dispatch(setEventListSource({value, parts, index, chosen:chosen.join('.')}));
     }
   }
