@@ -5,6 +5,7 @@ import { sessions }               from './Sessions';
 import { attributes }             from './Attributes';
 import { events }                 from './TimeSeries';
 import { logcat }                 from './Logcat';
+import { EventLists }             from './EventLists'
 
 const rootReducer = {
   current,
@@ -13,6 +14,7 @@ const rootReducer = {
   attributes,
   events,
   logcat,
+  EventLists,
 };
 
 export default rootReducer

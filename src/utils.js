@@ -97,7 +97,30 @@ export function drawEach(list, name, fn) {
 
     return [...m, ...items];
   })
+}
 
+export function renderableArray(items, fn) {
+  return sg.reduce(items, [], (m, value, n) => {
+    if (sg.isnt(value)) { return m; }
+    const it = fn(m, value, n, n);
+    if (sg.isnt(it))    { return m; }
+    return [...m, it];
+  });
+}
+
+export function renderableObject(obj, fn) {
+  var n = 0;
+  return sg.reduce(obj, [], (m, value, key) => {
+    if (sg.isnt(value)) { return m; }
+    const it = fn(m, value, key, n++);
+    if (sg.isnt(it))    { return m; }
+    return [...m, it];
+  });
+}
+
+export function renderable(x, fn) {
+  if (_.isArray(x)) { return renderableArray(x, fn); }
+  return renderableObject(x, fn);
 }
 
 export function displaySessionId(session) {
