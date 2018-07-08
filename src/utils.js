@@ -102,8 +102,10 @@ export function drawEach(list, name, fn) {
 export function renderableArray(items, fn) {
   return sg.reduce(items, [], (m, value, n) => {
     if (sg.isnt(value)) { return m; }
-    const it = fn(m, value, n, n);
+
+    const it = fn(value, n, n);
     if (sg.isnt(it))    { return m; }
+
     return [...m, it];
   });
 }
@@ -112,8 +114,10 @@ export function renderableObject(obj, fn) {
   var n = 0;
   return sg.reduce(obj, [], (m, value, key) => {
     if (sg.isnt(value)) { return m; }
-    const it = fn(m, value, key, n++);
+
+    const it = fn(value, key, n++);
     if (sg.isnt(it))    { return m; }
+
     return [...m, it];
   });
 }

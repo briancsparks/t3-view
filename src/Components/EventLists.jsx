@@ -16,63 +16,47 @@ export class EventLists extends Component {
 
   render() {
 
-    // var eventLists = {
-    //   items: [{
-    //     chosenSource: 'logcat',
-    //     sources : {
-    //       events : 'mwpUp,sentPacket'.split(','),
-    //       logcat : 'WifiStateMachine,WifiConfigManager'.split(','),
-    //     },
-    //   }, {
-    //     chosenSource: 'events',
-    //     sources : {
-    //       events : 'mwpUp,sentPacket'.split(','),
-    //       logcat : 'WifiStateMachine,WifiConfigManager'.split(','),
-    //     },
-    //   }]
-    // };
-
     const eventLists = this.props.eventLists;
 
-    // function onChange(event) {
-    //   alert('foobar'+event.target.value);
-    // }
-
-    // const n=1;
     return (
 
       <div>
         {sg.reduce(eventLists.items, [], (m, eventList, eventListNum) => {
-          const chosenSource = eventList.chosen[0];
-          var   nameB = '';
+          const chosen    = eventList.chosen;
+
           return ([...m,
             <div className="row" id={eventListNum}>
               <div className="col-md-12">
 
                 <Form inline>
+
+                  {/* {---------- The Source Select ----------} */}
                   <ControlLabel>Source</ControlLabel>
                   <FormControl componentClass="select" placeholder="source" onChange={this.props.onSelected}>
-                    <option value={`${eventListNum}.all`}>all</option>
-                    {renderable(eventList.sources, (m, x_items, source, sourceNum) => {
+                    {/* <option value={`${eventListNum}.all`}>all</option> */}
+                    {renderable(eventList.sources, (x_items, source, sourceNum) => {
                       return ([
-                        <option value={`${eventListNum}.${source}`} selected={sourceNum===eventListNum}>{source}</option>
+                        <option value={`${eventListNum}.${source}`} selected={source===chosen[0]}>{source}</option>
                       ])
                     })}
                   </FormControl>{' '}
 
+                  {/* {---------- The Sub-Collection Select ----------} */}
                   <ControlLabel>Module</ControlLabel>
                   <FormControl componentClass="select" placeholder="module" onChange={this.props.onSelected}>
-                    <option value="all">all</option>
-                    {renderable(eventList.sources[chosenSource], (m, name, n) => {
-                      nameB = nameB || name;
-                      var props = {value:`${eventListNum}.${chosenSource}.${name}`, selected: (n===0)};
+                    {(chosen[1] !== null) ? null :
+                      <option value="choose" selected={true}>choose</option>
+                    }
+                    {renderable(eventList.sources[chosen[0]], (x_items, name, n) => {
                       return ([
-                        <option {...props}>{name}</option>
+                        <option value={`${eventListNum}.${chosen[0]}.${name}`} selected={name===chosen[1]}>{name}</option>
                       ])
                     })}
+                    <option value="all">all</option>
                   </FormControl>{' '}
-                  {chosenSource}/{nameB}
+                  {chosen[0]}/{chosen[1]}
 
+                  {/* {---------- The RegEx Edit ----------} */}
                   <FieldGroup
                     id="re1"
                     type="text"

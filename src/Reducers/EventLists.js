@@ -5,6 +5,7 @@ import {
   ADD_RAW_LOGCAT_DATA,
   SET_EVENT_LIST_SOURCE,
 }                             from '../Actions/ActionTypes.js';
+import sg                     from 'sgsg/lite'
 import _                      from 'underscore'
 
 var defItem = {
@@ -14,18 +15,16 @@ var defItem = {
 
 var exampleState = {
   items: [{
-    chosenSource: 'events',
-    chosen: ['events', 'mwpUp'],
-    sources : {
-      events : 'mwpUp,sentPacket'.split(','),
-      logcat : 'WifiStateMachine,WifiConfigManager'.split(','),
-    },
-  }, {
-    chosenSource: 'logcat',
     chosen: ['logcat', 'WifiStateMachine'],
     sources : {
-      events : 'mwpUp,sentPacket'.split(','),
-      logcat : 'WifiStateMachine,WifiConfigManager'.split(','),
+      events : sg.keyMirror('mwpUp,sentPacket'),
+      logcat : sg.keyMirror('WifiStateMachine,WifiConfigManager'),
+    },
+  }, {
+    chosen: ['events', 'mwpUp'],
+    sources : {
+      events : sg.keyMirror('mwpUp,sentPacket'),
+      logcat : sg.keyMirror('WifiStateMachine,WifiConfigManager'),
     },
   }]
 };
@@ -70,15 +69,15 @@ export function EventLists(state = {...initialState}, action) {
 //   }]
 // };
 
-function handleSetEventListSource(state, index, chosen__) {
+function handleSetEventListSource(state, index, chosenStr) {
   const subItem = state.items[index] || {...defItem};
 
-  const chosen_   = chosen__.split('.');
-  const chosen    = [...chosen_, ..._.rest(subItem.chosen, chosen_.length)];
-  const item      = {...subItem, chosen};
-  var   items     = [...state.items];
+  const chosenArr   = [...chosenStr.split('.'), null].slice(0, 2);
+  const chosen      = [...chosenArr, ..._.rest(subItem.chosen, chosenArr.length)];
+  const item        = {...subItem, chosen};
+  var   items       = [...state.items];
 
-  items[index]    = item;
+  items[index]      = item;
 
   return {...state, items}
 }
