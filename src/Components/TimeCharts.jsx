@@ -88,12 +88,6 @@ export function TimeCharts({ help, ...props }) {
   if ((reason = checkProps(props, requiredKeys))) {
     return reason;
   }
-  // for (var i = 0; i < requiredKeys.length; ++i) {
-  //   const key = requiredKeys[i];
-  //   if (!(key in props)) {
-  //     return errorReason(`${key} is required`);
-  //   }
-  // }
 
   const {
     controlEvents,
@@ -122,12 +116,15 @@ export function TimeCharts({ help, ...props }) {
   const mwpUpRange        = lastMwpUpTick - firstMwpUpTick;
   const extra             = mwpUpRange * 0.05;
 
-  const firstTick         = sg.reduce(allTimeseries, firstMwpUpTick, (m, ts) => invokeIt(Math.min, ts.range().begin(), m));
-  const lastTick          = sg.reduce(allTimeseries, lastMwpUpTick,  (m, ts) => invokeIt(Math.max, ts.range().end(),   m));
+  const firstTick         = Math.max(-(1000 * 60 * 5),
+                                sg.reduce(allTimeseries, firstMwpUpTick, (m, ts) => invokeIt(Math.min, ts.range().begin(), m)));
+  const lastTick          = Math.min(1000 * 60 * 5,
+                                sg.reduce(allTimeseries, lastMwpUpTick,  (m, ts) => invokeIt(Math.max, ts.range().end(),   m)));
 
   firstMwpUpTick         -= extra;
   lastMwpUpTick          += extra;
 
+  // These are used in the HTML
   const loopNumMax        = mwpTimeSeries ? mwpTimeSeries.max('it.loopNum') : 100;
   const fullTimeRange     = new TimeRange([firstTick, lastTick]);
   // const myBrushrange      = brushrange || new TimeRange([firstMwpUpTick, lastMwpUpTick]);

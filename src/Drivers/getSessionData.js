@@ -137,6 +137,8 @@ function crackPayload(payload_, store) {
 
 const xtime = new Date();
 const goodSamples = _.map([{
+  "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180709051907753",
+}, {
   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180630174600154",
 }, {
   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180312124354509",

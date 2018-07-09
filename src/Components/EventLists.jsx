@@ -7,6 +7,7 @@ import React, { Component }   from 'react'
 import sg, {
   deref
 }                             from 'sgsg/lite'
+import _                      from 'underscore'
 import {
   renderable
 }                             from '../utils'
@@ -125,11 +126,19 @@ export class EventLists extends Component {
                       {(chosen[1] !== null) ? null :
                         <option value="choose">choose</option>
                       }
-                      {renderable(eventList.sources[chosen[0]], (x_items, name, n) => {
-                        return ([
-                          <option {...optionProps(`${eventListNum}.${chosen[0]}.${name}`, name===chosen[1])}>{name}</option>
-                        ])
-                      })}
+                      {(() => {
+                        const items = eventList.sources[chosen[0]];
+                        var    keys  = _.sortBy(_.keys(items), key => items[key].count);
+                        keys.reverse();
+                        return (
+                          renderable(keys, (name, n) => {
+                            const item = items[name];
+                            return ([
+                              <option {...optionProps(`${eventListNum}.${chosen[0]}.${name}`, name===chosen[1])}>{name}-{item.count}</option>
+                            ])
+                          })
+                        )
+                      })()}
                       <option value="all">all</option>
                     </FormControl>
                   </FormGroup>{' '}
@@ -145,7 +154,8 @@ export class EventLists extends Component {
 
                 </Form>
 
-                <div style={{font:"400 16px courier", textAlign:"left"}}>
+                {/* {---------- The List of Lines ----------} */}
+                <div style={{font:"400 10px courier", textAlign:"left"}} width="2000px">
                   {/* {this.state.re}<p/>
                   {chosen[0]}/{chosen[1]}<p/>
                   Mario<p/>
@@ -166,12 +176,16 @@ export class EventLists extends Component {
                     const m = re.exec(str);
                     if (!m) {
                       return (
-                        <p>{str}</p>
+                        <div>
+                          <span style={{whiteSpace:"nowrap", textOverflow:"ellipsis"}}>{str}</span>
+                        </div>
                       )
                     }
 
                     return (
-                      <p style={{font:"400 28px courier"}}>{str}</p>
+                      <div>
+                        <span style={{font:"400 16px courier", whiteSpace:"nowrap", textOverflow:"ellipsis"}}>{str}</span>
+                      </div>
                     )
                   })}
                 </div>
