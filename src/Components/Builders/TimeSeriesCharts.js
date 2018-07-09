@@ -8,7 +8,7 @@ import {
   // TimeRange
 }                             from 'pondjs';
 import { cold }               from 'react-hot-loader';
-// import { invokeIt }           from '../../utils';
+import { invokeIt }           from '../../utils';
 
 const sg                      = require('sgsg/lite');
 const _                       = require('underscore');
@@ -95,16 +95,20 @@ export class Builder {
 
     const axisId          = options.axisId    || `${bigName}AxisId`;
     const deepKey         = options.deepKey   || `${bigName}.y`;
-    var   label           = options.label;;
+    var   label           = options.label;
     var   tsData = [];
+    var   items  = [];
 
     dataList.forEach(dataItem => {
       const { /* name, */ data, key } = dataItem;
 
       label = label || key;
 
-      tsData = [...tsData, ...data.map(item => {
-        return [item.tick, {y: item[key], ...item}];
+      const newItems = data.map(item => ({y: +item[key], ...item}));
+
+      items   = [...items, ...newItems];
+      tsData  = [...tsData, ...newItems.map(item => {
+        return [item.tick, item];
       })]
 
       tsData = _.sortBy(tsData, x => x[0])
@@ -113,6 +117,7 @@ export class Builder {
 
     const timeSeries  = new TimeSeries({bigName, utc, columns: ['time', bigName], points:tsData});
 
+    seriesItem.items        = items;
     seriesItem.scatterChart = {
       series      : timeSeries,
       columns     : [deepKey],
@@ -134,8 +139,8 @@ export class Builder {
     seriesItem.yAxis = {
       id          : axisId,
       label       : label,
-      min         : timeSeries.min(deepKey),
-      max         : timeSeries.max(deepKey),
+      min         : invokeIt(Math.min, timeSeries.min(deepKey), options.min),
+      max         : invokeIt(Math.max, timeSeries.max(deepKey), options.max),
       type        : 'linear',
       format      : ',.1f',
       width       : 70,

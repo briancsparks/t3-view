@@ -19,7 +19,7 @@ import {
 import { cold }               from 'react-hot-loader';
 
 import {
-  Resizable,
+  // Resizable,
   ChartRow,
   ChartContainer,
   Brush,
@@ -36,7 +36,7 @@ import {
 
 // Must 'cold' all modules from react-timeseries-charts. See https://www.npmjs.com/package/react-hot-loader
 //    (look for the section on colding modules)
-cold(Resizable)
+// cold(Resizable)
 cold(ChartRow)
 cold(ChartContainer)
 cold(Brush)
@@ -133,11 +133,12 @@ export class IpAcrossTimeComponent extends React.Component {
 
         <div className="row" id={0}>
           <div className="col-md-12" style={brushStyle}>
-            <Resizable>
+            {/* <Resizable> */}
               <ChartContainer
                   timeRange={fullTimeRange}
                   format="relative"
                   trackerPosition={this.state.tracker}
+                  width={this.state.width || 1200}
                 >
                 <ChartRow height="100" debug={false}>
                   <Brush
@@ -165,7 +166,7 @@ export class IpAcrossTimeComponent extends React.Component {
                 </ChartRow>
               </ChartContainer>
 
-            </Resizable>
+            {/* </Resizable> */}
           </div>
         </div>
 
@@ -230,7 +231,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
       <div className="row" key={n} id={n}>
         <div className="col-md-12" style={chartStyle}>
-          <Resizable>
+          {/* <Resizable> */}
 
             <ChartContainer timeRange={timerange}
               format="relative"
@@ -238,7 +239,8 @@ export class IpAcrossTimeComponent extends React.Component {
               onTrackerChanged={this._handleTrackerChanged.bind(this)}
               onTimeRangeChanged={this._handleTimeRangeChange.bind(this)}
               onChartResize={this._handleChartResize.bind(this)}
-            >
+              width={this.state.width || 1200}
+              >
 
               <ChartRow height="100" debug={false}
                 visible={true}
@@ -319,7 +321,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
               </ChartRow>
             </ChartContainer>
-          </Resizable>
+          {/* </Resizable> */}
         </div>
       </div>
     )
