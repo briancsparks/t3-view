@@ -85,6 +85,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
   render() {
 
+    // console.log(`ipacrosstimecomponent`, {props:this.props});
     const mwpUpEvents       = this.props.mwpUpEvents;
 
     if (!mwpUpEvents || mwpUpEvents.length <= 0) {
@@ -227,7 +228,7 @@ export class IpAcrossTimeComponent extends React.Component {
 
     return (
 
-      <div className="row" id={n}>
+      <div className="row" key={n} id={n}>
         <div className="col-md-12" style={chartStyle}>
           <Resizable>
 

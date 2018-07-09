@@ -4,6 +4,9 @@ import { connect }              from "react-redux";
 import {
   setEventListSource
 }                               from '../Actions/Actions'
+import {
+  deref
+}                               from 'sgsg/lite'
 
 // var eventListsX = {
 //   items: [{
@@ -23,7 +26,19 @@ import {
 
 const mapStateToProps = (state, ownProps) => {
 
-  return {eventLists: { ...state.EventLists, ...ownProps }}
+  const props = {
+    eventLists    : {
+      ...state.EventLists,
+      ...ownProps
+    },
+    ipAcrossTime  : {
+      mwpUpEvents : deref(state, 'events.eventsByEventType.mwpUp') || [],
+      charts      : [],
+    }
+  }
+  // console.log(`eventlistcontainer`, {props, tprops:props.ipAcrossTime});
+
+  return props;
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -34,7 +49,7 @@ const mapDispatchToProps = (dispatch) => {
       const [
         indexStr, ...chosen ]  = parts;
       const index = +indexStr;
-      dispatch(setEventListSource({value, parts, index, chosen:chosen.join('.')}));
+      dispatch(setEventListSource({index, chosen:chosen.join('.')}));
     }
   }
 }

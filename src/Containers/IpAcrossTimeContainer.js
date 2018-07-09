@@ -89,12 +89,14 @@ const mapStateToProps = (state, ownProps) => {
   }
 
 
-  return {
+  const props = {
     mwpUpEvents : deref(state, 'events.eventsByEventType.mwpUp') || [],
     charts      : builder.getCharts(),
   };
 
-  // return {...ownProps, store:state};
+  // console.log(`ipacrosstimecontainer`, {props});
+
+  return props;
 }
 
 

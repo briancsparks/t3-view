@@ -76,8 +76,8 @@ export function setCurrentSession(session) {
         const logcatList        = _.filter(theNotList, item => item.typename === 'logcat');
               theNotList        = _.filter(theNotList, item => item.typename !== 'logcat');
 
-        // items = [...attributeList, ...telemetryList, ...logcatList, ...theNotList];
-        items = [...attributeList, ...telemetryList, ...theNotList];
+        items = [...attributeList, ...telemetryList, ...logcatList, ...theNotList];
+        // items = [...attributeList, ...telemetryList, ...theNotList];
 
         // Loop over and load all the data files
         return sg.until((again, last, count) => {

@@ -39,6 +39,7 @@ export function logcat(state = {...initialState}, action) {
 
   switch (type) {
     case ADD_RAW_LOGCAT_DATA:
+      // console.log(`logcat reduce`, {action});
       return handleRawLogcatData(state, action);
 
     default:
@@ -51,8 +52,7 @@ function handleRawLogcatData(state, action) {
   var   eventList  = unpackPayload(payload)
 
   var   newEventList = eventList.items.map(event => {
-    const mod = chompColon(event.mod || event.module || '');
-    return {...event, mod, module:mod, __id:genId()}
+    return {...cleanItem(event), __id:genId()};
   })
 
   var   events  = [...state.events, ...newEventList];
@@ -111,6 +111,10 @@ function calcClockSkew(events) {
 
 }
 
+export function cleanItem(item) {
+  const mod = chompColon(item.mod || item.module || '');
+  return {...item, mod, module:mod}
+}
 
 function chompColon(str_) {
   var str = str_;

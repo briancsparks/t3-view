@@ -26,7 +26,7 @@ class App extends Component {
           {/* Header and Brand */}
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="/">Luigi {this.props.current.testCount} Telemetry Viewer</a>
+              <a href="/">Luigi {this.props.current.hotReloadCount} Telemetry Viewer</a>
             </Navbar.Brand>
 
           </Navbar.Header>

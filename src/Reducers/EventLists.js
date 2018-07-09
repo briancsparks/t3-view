@@ -5,6 +5,12 @@ import {
   ADD_RAW_LOGCAT_DATA,
   SET_EVENT_LIST_SOURCE,
 }                             from '../Actions/ActionTypes.js';
+import {
+  cleanItem as cleanLogcatItem
+}                             from './Logcat';
+import {
+  unpackPayload,
+}                             from '../utils';
 import sg                     from 'sgsg/lite'
 import _                      from 'underscore'
 
@@ -13,6 +19,7 @@ var defItem = {
   sources : {},
 };
 
+// eslint-disable-next-line no-unused-vars
 var exampleState = {
   items: [{
     chosen: ['logcat', 'WifiStateMachine'],
@@ -28,11 +35,16 @@ var exampleState = {
     },
   }]
 };
-const initialState = exampleState;
+// const initialState = exampleState;
 
-// const initialState = {
-//   events  : {}
-// };
+const initialState = {
+  items: [{
+    chosen: ['logcat', null],
+    sources : {
+      logcat : [],
+    },
+  }]
+};
 
 
 export function EventLists(state = {...initialState}, action) {
@@ -41,10 +53,12 @@ export function EventLists(state = {...initialState}, action) {
 
   switch (type) {
   case ADD_RAW_LOGCAT_DATA:
-    return state;
+    // console.log(`EventLists reduce logcat`, {action});
+    return handleAddRawLogcatData(state, action);
 
   case ADD_RAW_TIMESERIES_DATA:
-    return state;
+    // console.log(`EventLists reduce timeseries`, {action});
+    return handleAddRawTimeseriesData(state, payload);
 
   case SET_EVENT_LIST_SOURCE:
     return handleSetEventListSource(state, payload.index, payload.chosen);
@@ -55,6 +69,43 @@ export function EventLists(state = {...initialState}, action) {
   default:
     return state;
   }
+}
+
+
+function handleAddRawTimeseriesData(state, action) {
+  return state;
+}
+
+
+function handleAddRawLogcatData(state, action) {
+  const { payload, store }   = action;
+
+  var   eventList     = unpackPayload(payload)
+  const items0        = (store.EventLists && store.EventLists.items && store.EventLists.items[0]) || {};
+  const oldLogcat     = (items0.sources && items0.sources.logcat) || [];
+
+  const logcat = sg.reduce(eventList.items, {...oldLogcat}, (m, event_) => {
+    const event   = cleanLogcatItem(event_);
+    const mod     = event.mod || event.module;
+    if (!mod)   { return m; }
+
+    m[mod] = m[mod] || { count: 0 };
+    m[mod].count += 1;
+
+    return m;
+  });
+
+  return {...state,
+    items: state.items.map(item => {
+      return {...item,
+        sources: {...item.sources,
+          logcat
+        }
+      }
+    })
+  };
+
+  // return state;
 }
 
 // var state = {
@@ -79,27 +130,24 @@ function handleSetEventListSource(state, index, chosenStr) {
 
   items[index]      = item;
 
-  console.log(`two`, {...state, items});
-
-  const x = updated(state, {
-    items : (oldItems) => {
-      return [
-        [+index, updated(oldItems[index], {
-          chosen: chosenArr
-        })]
-      ];
-    }
-  });
-
-  console.log(`one`, x);
-
   return {...state, items}
 }
 
+// const x = updated(state, {
+//   items : (oldItems) => {
+//     return [
+//       [+index, updated(oldItems[index], {
+//         chosen: chosenArr
+//       })]
+//     ];
+//   }
+// });
+
+
+// eslint-disable-next-line no-unused-vars
 function updated(obj, updaters) {
   const updates = sg.reduce(updaters, {}, (m, updater, key) => {
     const value = obj[key];
-console.log({key, value})
 
     if (!_.isFunction(updater)) {
       return {...m, [key]: updater};
@@ -118,7 +166,6 @@ console.log({key, value})
     return {...m, [key]: updater(value)};
   });
 
-console.log(`updating`, {obj, updates})
   return {...obj, ...updates}
 }
 
@@ -130,7 +177,7 @@ function updatedArray(arr, updater) {
   } else {
     result = updater(arr);
   }
-console.log(`uArr res`, {result})
+
   if (sg.isnt(result))        { return arr; }
 
   if (!_.isArray(result)) {
@@ -161,13 +208,13 @@ function isIndexUpdateArray(arr) {
   return false;
 }
 
-function xyz() {
-  const obj = {items:[1,2,3], other:'foo'}
+// function xyz() {
+//   const obj = {items:[1,2,3], other:'foo'}
 
-  const o2 = updated(obj, {
-    items: function() {
-      return [[2, "foo"]]
-    }
-  })
-}
+//   const o2 = updated(obj, {
+//     items: function() {
+//       return [[2, "foo"]]
+//     }
+//   })
+// }
 

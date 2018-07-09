@@ -12,10 +12,15 @@ import {
   ADD_RAW_TIMESERIES_DATA,
   ADD_RAW_ATTRIBUTE_DATA,
   SET_EVENT_LIST_SOURCE,
+  INCR_HOT_RELOAD_COUNT,
 }                                   from './ActionTypes';
-import { storifiedAction }          from './ActionUtilities';
+import {
+  storifiedAction, plainAction
+}                                   from './ActionUtilities';
 
-export const addRawTimeSeriesFeedData     = storifiedAction(ADD_RAW_TIMESERIES_FEED_DATA);
+var   Actions = {};
+
+export const addRawTimeSeriesFeedData     = storifiedAction(ADD_RAW_TIMESERIES_FEED_DATA);  Actions = {...Actions, addRawTimeSeriesFeedData};
 export const addRawTimeSeriesData         = storifiedAction(ADD_RAW_TIMESERIES_DATA);
 export const addTimeSeriesData            = storifiedAction(ADD_TIMESERIES_DATA);
 export const addSessions                  = storifiedAction(ADD_SESSIONS);
@@ -29,6 +34,8 @@ export const setEventListSource           = storifiedAction(SET_EVENT_LIST_SOURC
 
 export const incrCurrentTestCount2        = storifiedAction(INCR_CURRENT_TEST_COUNT);
 
+export const incrHotReloadCount           = plainAction(INCR_HOT_RELOAD_COUNT);             Actions = {...Actions, incrHotReloadCount};
+
 export function incrCurrentTestCount(data = 1) {
   return {
     type    : INCR_CURRENT_TEST_COUNT,
@@ -36,7 +43,7 @@ export function incrCurrentTestCount(data = 1) {
   }
 }
 
-export default {
-  incrCurrentTestCount
-};
+Actions = {...Actions, incrCurrentTestCount};
+
+export default Actions;
 
