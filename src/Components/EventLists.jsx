@@ -55,7 +55,7 @@ export class EventLists extends Component {
   _handleResize() {
     const sizingDiv = document.getElementById('mysizingdiv');
     if (sizingDiv) {
-      const width = sizingDiv.offsetWidth;
+      const width = sizingDiv.offsetWidth - 100;
       // const width = sizingDiv.clientWidth;
       this.setState({widths: {...this.state.widths, mysizingdiv: width}});
       // console.log(`found mysizingdiv ${width}`, {sizingDiv});
@@ -77,7 +77,7 @@ export class EventLists extends Component {
       tracker     : this.state.tracker,
 
       // eslint-disable-next-line no-mixed-operators
-      width       : this.state.widths && this.state.widths.mysizingdiv || 1200,
+      width       : this.state.widths && this.state.widths.mysizingdiv || 1100,
 
       onTimeRangeChanged    : this._handleTimeRangeChanged.bind(this),
       onTrackerChanged      : this._handleTrackerChanged.bind(this),
@@ -130,11 +130,14 @@ export class EventLists extends Component {
                         const items = eventList.sources[chosen[0]];
                         var    keys  = _.sortBy(_.keys(items), key => items[key].count);
                         keys.reverse();
+                        // var    keys  = _.sortBy(_.keys(items), key => key.toLowerCase());
                         return (
                           renderable(keys, (name, n) => {
                             const item = items[name];
+                            // const display = `${name}-${item.count}`;
+                            const display = `${item.count}-${name}`;
                             return ([
-                              <option {...optionProps(`${eventListNum}.${chosen[0]}.${name}`, name===chosen[1])}>{name}-{item.count}</option>
+                              <option {...optionProps(`${eventListNum}.${chosen[0]}.${name}`, name===chosen[1])}>{display}</option>
                             ])
                           })
                         )
@@ -155,11 +158,7 @@ export class EventLists extends Component {
                 </Form>
 
                 {/* {---------- The List of Lines ----------} */}
-                <div style={{font:"400 10px courier", textAlign:"left"}} width="2000px">
-                  {/* {this.state.re}<p/>
-                  {chosen[0]}/{chosen[1]}<p/>
-                  Mario<p/>
-                  {chosen[0]}/{chosen[1]}<p/> */}
+                <div style={{font:"400 10px courier", textAlign:"left"}}>
 
                   {msgList.map(str => {
                     var re;
@@ -182,9 +181,15 @@ export class EventLists extends Component {
                       )
                     }
 
+                    const left    = str.substr(0, m.index);
+                    const middle  = m[0];
+                    const right   = str.substr(m.index + middle.length)
+
                     return (
                       <div>
-                        <span style={{font:"400 16px courier", whiteSpace:"nowrap", textOverflow:"ellipsis"}}>{str}</span>
+                        <span style={{font:"400 14px courier", whiteSpace:"nowrap"}}>{left}</span>
+                        <span style={{font:"400 16px courier", backgroundColor:"cyan", whiteSpace:"nowrap"}}>{middle}</span>
+                        <span style={{font:"400 14px courier", whiteSpace:"nowrap"}}>{right}</span>
                       </div>
                     )
                   })}

@@ -138,7 +138,7 @@ export class IpAcrossTimeComponent extends React.Component {
                   timeRange={fullTimeRange}
                   format="relative"
                   trackerPosition={this.state.tracker}
-                  width={this.state.width || 1200}
+                  width={this.state.width || 1100}
                 >
                 <ChartRow height="100" debug={false}>
                   <Brush
@@ -239,7 +239,7 @@ export class IpAcrossTimeComponent extends React.Component {
               onTrackerChanged={this._handleTrackerChanged.bind(this)}
               onTimeRangeChanged={this._handleTimeRangeChange.bind(this)}
               onChartResize={this._handleChartResize.bind(this)}
-              width={this.state.width || 1200}
+              width={this.state.width || 1100}
               >
 
               <ChartRow height="100" debug={false}

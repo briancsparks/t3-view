@@ -121,7 +121,10 @@ function handleAddRawLogcatData(state, action) {
 // };
 
 function handleSetEventListSource(state, index, chosenStr) {
-  const chosenArr   = [...chosenStr.split('.'), null].slice(0, 2);
+  const chosenArr_  = chosenStr.split('.');
+  const source      = chosenArr_[0];
+  const module      = _.rest(chosenArr_).join('.');
+  const chosenArr   = [..._.compact([source, module]), null].slice(0, 2);
 
   const subItem = state.items[index] || {...defItem};
   const chosen      = [...chosenArr, ..._.rest(subItem.chosen, chosenArr.length)];

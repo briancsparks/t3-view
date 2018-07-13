@@ -152,7 +152,7 @@ export function TimeCharts({ help, ...props }) {
                 onTrackerChanged={onTrackerChanged}
                 onTimeRangeChanged={onTimeRangeChanged}
                 onChartResize={onChartResize}
-                width={width || 1200}
+                width={width || 1100}
               >
 
                 <ChartRow height="150" debug={false}
@@ -239,7 +239,7 @@ export function TimeCharts({ help, ...props }) {
               timeRange={fullTimeRange}
               format="relative"
               trackerPosition={tracker}
-              width={width || 1200}
+              width={width || 1100}
               >
             <ChartRow height="60" debug={false}>
               <Brush

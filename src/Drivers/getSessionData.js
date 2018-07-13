@@ -137,19 +137,21 @@ function crackPayload(payload_, store) {
 
 const xtime = new Date();
 const goodSamples = _.map([{
-  "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180709051907753",
+  "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180710161731223",
 }, {
-  "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180630174600154",
+  "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180709051907753",
+// }, {
+//   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180630174600154",
 }, {
   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180312124354509",
-}, {
-  "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180508184651460",
+// }, {
+//   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180508184651460",
 }, {
   "sessionId" : "mYagFRwcqeyX6E0ISpC7WV5sA1yVadIWowiADINqxHUG4ldh0rUcPmc4B0iKKVo0-20180601165717403",
 }, {
   "sessionId" : "mYagFRwcqeyX6E0ISpC7WV5sA1yVadIWowiADINqxHUG4ldh0rUcPmc4B0iKKVo0-20180603220418569",
-}, {
-  "sessionId": "SPARKSB3-20180627204041067"
+// }, {
+//   "sessionId": "SPARKSB3-20180627204041067"
 }], item => sg.extend({mtime:xtime, ctime:xtime, clientId:item.sessionId.split('-')[0]}, item));
 
 
@@ -157,7 +159,8 @@ export function getSessionData(store) {
   attachToFeed(store);
 
   // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180312124354509'
-  const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180701022645962'
+  // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180701022645962'
+  const firstSessionId = 'zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180710161731223'
 
   store.dispatch(addSessions(goodSamples));
   store.dispatch(resetTimeSeriesData());
