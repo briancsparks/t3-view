@@ -27,7 +27,7 @@ export class TopTabs extends React.Component {
             <IpAcrossTimeComponent></IpAcrossTimeComponent>
           </Tab>
           <Tab eventKey={1} title="Event Lists">
-            <EventLists></EventLists>
+            <EventLists key={0}></EventLists>
           </Tab>
         </Tabs>
       </div>

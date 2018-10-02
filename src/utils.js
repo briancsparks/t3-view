@@ -222,28 +222,38 @@ export function subnetExtents(network) {
   return result;
 }
 
+function fixNegative(ipNum) {
+  if (!(ipNum & 0x80000000)) {
+    return ipNum;
+  }
+
+  return (ipNum & 0x7fffffff) + 0x80000000;
+}
+
 export function firstIpFromNetmask(ipOnSubnet_, netmask_) {
   if (_.isObject(arguments[0])) {
     if (arguments[0].address && arguments[0].netmask)  { return firstIpFromNetmask(arguments[0].address, arguments[0].netmask); }
+    if (arguments[0].ipNum   && arguments[0].netmask)  { return firstIpFromNetmask(arguments[0].ipNum,   arguments[0].netmask); }
     return /*undefined*/;
   }
 
   const ipOnSubnet = _.isString(ipOnSubnet_) ? ipNumber(ipOnSubnet_) : ipOnSubnet_;
   const netmask    = _.isString(netmask_)    ? ipNumber(netmask_)    : netmask_;
 
-  return ipOnSubnet & netmask;
+  return fixNegative(ipOnSubnet & netmask);
 }
 
 export function lastIpFromNetmask(ipOnSubnet_, netmask_) {
   if (_.isObject(arguments[0])) {
     if (arguments[0].address && arguments[0].netmask)  { return lastIpFromNetmask(arguments[0].address, arguments[0].netmask); }
+    if (arguments[0].ipNum   && arguments[0].netmask)  { return lastIpFromNetmask(arguments[0].ipNum  , arguments[0].netmask); }
     return /*undefined*/;
   }
 
   const ipOnSubnet = _.isString(ipOnSubnet_) ? ipNumber(ipOnSubnet_) : ipOnSubnet_;
   const netmask    = _.isString(netmask_)    ? ipNumber(netmask_)    : netmask_;
 
-  return (ipOnSubnet & netmask) | ~netmask;
+  return fixNegative((ipOnSubnet & netmask) | ~netmask);
 }
 
 export function isOnSubnet(node, subnet) {

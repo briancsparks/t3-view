@@ -1,4 +1,16 @@
 
+/**
+ *  @file
+ *
+ *  Shows a list of lines from a line-oriented log file like logcat.
+ *
+ *  Starts with a select control to select the source of lines (like "logcat"), followed by a sub-catgory
+ *  ("module" in the UI), a RegExp control, and the lines themselves.
+ *
+ *  * Holds the time-series charts, which are implemented in TimeCharts.jsx
+ *
+ */
+
 import React, { Component }   from 'react'
 // import {
 //   IpAcrossTimeComponent
@@ -62,7 +74,7 @@ export class EventLists extends Component {
     }
   }
 
-  _handleReChange(e) {
+  _handleChange(e) {
     this.setState({re: e.target.value});
   }
 
@@ -119,7 +131,7 @@ export class EventLists extends Component {
                     </FormControl>
                   </FormGroup>{' '}
 
-                  {/* {---------- The Sub-Collection Select ----------} */}
+                  {/* {---------- The Sub-Collection ("module" in UI) Select ----------} */}
                   <FormGroup controlId={`${eventListNum}-mod`}>
                     <ControlLabel>Module</ControlLabel>
                     <FormControl componentClass="select" placeholder="module" value={chosen[1] ? `${eventListNum}.${chosen[0]}.${chosen[1]}` : `choose`} onChange={this.props.onSelected}>
@@ -151,7 +163,7 @@ export class EventLists extends Component {
                     id="re1"
                     type="text"
                     label="RegEx 1"
-                    onChange={this._handleReChange.bind(this)}
+                    onChange={this._handleChange.bind(this)}
                     placeholder="/(...)/"
                   />{' '}
 

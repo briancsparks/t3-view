@@ -1,4 +1,11 @@
 
+/**
+ *  @file Implementation for TimeCharts (functional component).
+ *
+ *  A general purpose control for displaying time-series charts that are controlled by a
+ *  LoopNumber controlling chart at the bottom.
+ *
+ */
 
 import React                  from 'react';
 import sg                     from 'sgsg/lite';
@@ -133,6 +140,7 @@ export function TimeCharts({ help, ...props }) {
   return (
     <div>
 
+    {/* {---------- The charts at the top ----------} */}
     {charts.map((seriesList, n) => {
       // return this.renderChartRow(myBrushrange, seriesList, n+1)
       // renderChartRow(timerange, seriesList, n) {
@@ -232,6 +240,7 @@ export function TimeCharts({ help, ...props }) {
     })}
 
 
+    {/* {---------- The LoopNumber controlling chart at the bottom ----------} */}
     <div className="row">
       <div className="col-md-12" style={brushStyle} id="mysizingdiv">
         {/* <Resizable> */}

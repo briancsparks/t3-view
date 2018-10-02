@@ -15,6 +15,8 @@ import { config }                   from '../utils';
 const sg                          = {...require('sgsg/lite'), ...require('sgsg/flow')};
 const _                           = require('underscore');
 
+var   urlRoot = 'https://pjyf263s1b.execute-api.us-east-1.amazonaws.com/dev';
+
 // /**
 //  * Clears the data
 //  */
@@ -38,6 +40,55 @@ export function setCurrentSessionId(session) {
   }
 }
 
+var allSessions;
+const getSession = function(sessionId, callback) {
+  if (allSessions) {
+    return callback(null, allSessions[sessionId]);
+  } else {
+    return request
+          .get(`${urlRoot}/newsessions`)
+          .set(`x-api-key`, `5j0IDUlvWJ8bQmCwJ8JphLEF9msILPzazFboNrWj`)
+          .end(function(err, res) {
+            if (sg.ok(err, res)) {
+              allSessions = sg.reduce(res.body.items, {}, (m,v) => {
+                return sg.kv(m, v.sessionId, v);
+              });
+              return callback(null, allSessions[sessionId]);
+            }
+          });
+  }
+};
+export function setCurrentSession(session_) {
+  const sessionId = session_.sessionId || session_;
+
+  return function(dispatch) {
+    return getSession(sessionId, function(err, session) {
+      if (sg.ok(err, session) && session.telemetry) {
+        // var   list = [...session.telemetry];
+        var   list = session.telemetry.filter(item => item.dataType === 'attrstream');
+        list = [...list, ...session.telemetry.filter(item => item.dataType !== 'attrstream')];
+
+        return sg.until(function(again, last) {
+          if (list.length === 0) { return last(); }
+
+          const current = list.shift();
+          return request.get(`${urlRoot}/telemetryblob?Key=${current.Key}`)
+                        .set(`x-api-key`, `5j0IDUlvWJ8bQmCwJ8JphLEF9msILPzazFboNrWj`)
+                        .end(function(err, res)
+          {
+            if (sg.ok(err, res) && res.ok) {
+              const typename = (res.body || {}).dataType || '';
+              dispatchByType(dispatch, typename, res.body);
+              return again();
+            }
+          });
+        }, function() {
+        });
+      }
+    });
+  };
+}
+
 /**
  * Indicates that the user has chosen this session.
  *
@@ -45,7 +96,7 @@ export function setCurrentSessionId(session) {
  *
  * @param {*} session The chosen session (sessionId or an object that has a sessionId.)
  */
-export function setCurrentSession(session) {
+export function setCurrentSession_X(session) {
   const sessionId = session.sessionId || session;
 
   return function(dispatch) {
@@ -114,12 +165,13 @@ export function setCurrentSession(session) {
 const actionFnsByType = {
   logcat      : addRawLogcatData,
   telemetry   : addRawTimeSeriesData,
+  event       : addRawTimeSeriesData,
   attrstream  : addRawAttributeData
 };
 
 function dispatchByType(dispatch, type, payload) {
 
-  const fn = actionFnsByType[type] || addRawTimeStampedData;
+  const fn = actionFnsByType[type];
   if (fn) {
     return dispatch(fn(payload));
   }

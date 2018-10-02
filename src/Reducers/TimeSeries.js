@@ -131,6 +131,12 @@ function nodeNum(item, interfaces) {
     }
   }
 
-  return result;
+  return result || lastResortNodeNum(item);
+}
+
+function lastResortNodeNum(item) {
+  if (item && item.ip && typeof item.ip === 'string') {
+    return +_.last(item.ip.split('.'));
+  }
 }
 

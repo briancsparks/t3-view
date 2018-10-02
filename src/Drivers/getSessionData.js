@@ -137,49 +137,49 @@ function crackPayload(payload_, store) {
 
 const xtime = new Date();
 const goodSamples = _.map([{
-  "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180710161731223",
+  "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180713125910006",
 }, {
   "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180709051907753",
-// }, {
-//   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180630174600154",
 }, {
   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180312124354509",
-// }, {
-//   "sessionId" : "A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180508184651460",
 }, {
   "sessionId" : "mYagFRwcqeyX6E0ISpC7WV5sA1yVadIWowiADINqxHUG4ldh0rUcPmc4B0iKKVo0-20180601165717403",
 }, {
   "sessionId" : "mYagFRwcqeyX6E0ISpC7WV5sA1yVadIWowiADINqxHUG4ldh0rUcPmc4B0iKKVo0-20180603220418569",
-// }, {
-//   "sessionId": "SPARKSB3-20180627204041067"
+}, {
+  "sessionId" : "zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180710161731223",
 }], item => sg.extend({mtime:xtime, ctime:xtime, clientId:item.sessionId.split('-')[0]}, item));
 
 
 export function getSessionData(store) {
-  attachToFeed(store);
+  // attachToFeed(store);
 
   // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180312124354509'
   // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180701022645962'
-  const firstSessionId = 'zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180710161731223'
+  // const firstSessionId = 'zIP0najQA74IImI51VE9eyu30furniBFmkdtwo7Dn2ymRhePp624kx6Prf9dmRBs-20180710161731223'
+  // const firstSessionId = goodSamples[0].sessionId;
+  // const firstSessionId = 'A00CIOMLvczYMoUcdf0Vhy6SDuzlvwgWlXsqiu70vIOVttuC10gx0SojgN8faUHC-20180713125910006'
+  // const firstSessionId = 'SPARKSB3-20180911015913118';
+  const firstSessionId = 'SPARKSB3-20181002084741390';
 
   store.dispatch(addSessions(goodSamples));
   store.dispatch(resetTimeSeriesData());
   store.dispatch(setCurrentSession(firstSessionId));
 
-  return config.urlFor('query', `querySessions?destKey=asdf&requestId=${dataBootstrap}&limit=${numSessions}&dataType=dbRecords`, true, function(err, queryEndpoint) {
-    return sg.until(function(again, last, count, elapsed) {
+  // return config.urlFor('query', `querySessions?destKey=asdf&requestId=${dataBootstrap}&limit=${numSessions}&dataType=dbRecords`, true, function(err, queryEndpoint) {
+  //   return sg.until(function(again, last, count, elapsed) {
 
-      // Have we gotten any data yet?
-      if (dataCount >= numSessions) {
-        return last();
-      }
+  //     // Have we gotten any data yet?
+  //     if (dataCount >= numSessions) {
+  //       return last();
+  //     }
 
-      return request.get(queryEndpoint).end(function(err, res) {
-        return again(1500);
-      });
-    }, function done() {
-    });
-  });
+  //     return request.get(queryEndpoint).end(function(err, res) {
+  //       return again(1500);
+  //     });
+  //   }, function done() {
+  //   });
+  // });
 }
 
 

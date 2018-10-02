@@ -1,7 +1,21 @@
 
 /**
+ *  @file Implementation of Builder class that builds the data that is consumed by TimeCharts.jsx.
+ *
+ *  React-time-series-charts (RTSC) are great, but the data we are displaying does not naturally flow into them.
+ *  The Builder class helps transmogrify one format to the other.
+ *
+ *  * Since Netlab data is only of a couple of types, RTSCs flexibility with its axes are given up for ease
+ *    of building them.
+ *
+ *  1. Manages the data much like a 2-D array, instead of as a hierarchy like RTSC does.
+ *
+ *  *   Each row is [axis, netlab-formatted-data, axis].
+ *  *   Each item in the row can be null (though a null data makes no sense).
+ *  *   Any axis can be just the name of an axis that has already been built.
  *
  */
+
 // import { format }             from 'd3-format';
 import {
   TimeSeries,
