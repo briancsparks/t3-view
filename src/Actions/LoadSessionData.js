@@ -10,12 +10,16 @@ import {
   addRawTimeSeriesData,
   addRawAttributeData
 }                                   from './Actions';
-import { config }                   from '../utils';
+import {
+  getEnvVar,
+  config
+}                                   from '../utils';
 
 const sg                          = {...require('sgsg/lite'), ...require('sgsg/flow')};
 const _                           = require('underscore');
 
-var   urlRoot = 'https://pjyf263s1b.execute-api.us-east-1.amazonaws.com/dev';
+var   urlRoot = getEnvVar('URL_ROOT', 'production');
+const apiKey  = getEnvVar('API_CORE_API_KEY', 'production');
 
 // /**
 //  * Clears the data
@@ -42,12 +46,12 @@ export function setCurrentSessionId(session) {
 
 var allSessions;
 const getSession = function(sessionId, callback) {
-  if (allSessions) {
+  if (allSessions && allSessions[sessionId]) {
     return callback(null, allSessions[sessionId]);
   } else {
     return request
           .get(`${urlRoot}/newsessions`)
-          .set(`x-api-key`, `5j0IDUlvWJ8bQmCwJ8JphLEF9msILPzazFboNrWj`)
+          .set(`x-api-key`, apiKey)
           .end(function(err, res) {
             if (sg.ok(err, res)) {
               allSessions = sg.reduce(res.body.items, {}, (m,v) => {
@@ -73,7 +77,7 @@ export function setCurrentSession(session_) {
 
           const current = list.shift();
           return request.get(`${urlRoot}/telemetryblob?Key=${current.Key}`)
-                        .set(`x-api-key`, `5j0IDUlvWJ8bQmCwJ8JphLEF9msILPzazFboNrWj`)
+                        .set(`x-api-key`, apiKey)
                         .end(function(err, res)
           {
             if (sg.ok(err, res) && res.ok) {

@@ -12,6 +12,19 @@ const urlLib                  = require('url');
 const deref                     = sg.deref;
 const setOnn                    = sg.setOnn;
 
+export function getEnvVar(name, node_env_) {
+  const node_env = (node_env_ || process.env.NODE_ENV || 'development').toUpperCase();
+
+  var   result    = process.env[(`REACT_APP_${name}`).toUpperCase()];
+  if (result) {
+    return result;
+  }
+
+  if ((result = process.env[(`REACT_APP_${node_env}_${name}`).toUpperCase()]))    { return result; }
+
+  return `${name}_NOTFOUND`;
+}
+
 // This is what the server would return
 // TODO: Fix this up for the server-side routing
 const webTierColor = 'teal';
